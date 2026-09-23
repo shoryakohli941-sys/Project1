@@ -1,0 +1,1593 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Dashboard | LinkUp</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+/* =========================================
+   ACCOUNT SWITCHER
+========================================= */
+
+.account-switcher {
+    display: flex;
+    gap: 6px;
+
+    width: fit-content;
+
+    padding: 4px;
+
+    margin-bottom: 18px;
+
+    border-radius: 9px;
+
+    background: rgba(0, 0, 0, 0.25);
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+
+.account-type {
+    padding: 7px 12px;
+
+    border: none;
+    border-radius: 7px;
+
+    background: transparent;
+
+    color: rgba(255, 255, 255, 0.4);
+
+    font-size: 10px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+
+.account-type.active {
+    background: #ffc400;
+
+    color: #050505;
+}
+        /* =========================================
+           LINKUP DASHBOARD
+        ========================================= */
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #050505;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+        }
+
+        .dashboard {
+            min-height: 100vh;
+            display: flex;
+            background:
+                radial-gradient(
+                    circle at 70% 10%,
+                    rgba(255, 196, 0, 0.06),
+                    transparent 30%
+                ),
+                #050505;
+        }
+
+
+        /* =========================================
+           SIDEBAR
+        ========================================= */
+
+        .sidebar {
+            width: 250px;
+            min-height: 100vh;
+
+            position: fixed;
+            left: 0;
+            top: 0;
+
+            padding: 28px 18px;
+
+            background: rgba(10, 10, 10, 0.95);
+
+            border-right: 1px solid rgba(255, 255, 255, 0.08);
+
+            display: flex;
+            flex-direction: column;
+
+            z-index: 10;
+        }
+
+
+        .dashboard-logo {
+            padding: 0 14px;
+            margin-bottom: 45px;
+
+            font-size: 27px;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+
+        .dashboard-logo span {
+            color: #ffc400;
+        }
+
+
+        .nav-title {
+            padding: 0 14px;
+            margin-bottom: 12px;
+
+            color: rgba(255, 255, 255, 0.3);
+
+            font-size: 10px;
+            font-weight: 700;
+
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+
+        .dashboard-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+
+        .dashboard-nav a {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+
+            padding: 12px 14px;
+
+            border-radius: 10px;
+
+            color: rgba(255, 255, 255, 0.55);
+
+            text-decoration: none;
+
+            font-size: 13px;
+            font-weight: 600;
+
+            transition: 0.2s ease;
+        }
+
+
+        .dashboard-nav a:hover {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+
+        .dashboard-nav a.active {
+            color: #ffc400;
+            background: rgba(255, 196, 0, 0.09);
+        }
+
+
+        .nav-icon {
+            width: 20px;
+            text-align: center;
+            font-size: 15px;
+        }
+
+
+        .sidebar-bottom {
+            margin-top: auto;
+        }
+
+
+        .sidebar-profile {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+
+            padding: 14px;
+
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+
+        .profile-avatar {
+            width: 36px;
+            height: 36px;
+
+            border-radius: 50%;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: #ffc400;
+            color: #050505;
+
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+
+        .profile-info {
+            min-width: 0;
+        }
+
+
+        .profile-info strong {
+            display: block;
+
+            color: #ffffff;
+
+            font-size: 12px;
+
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+
+        .profile-info span {
+            color: rgba(255, 255, 255, 0.35);
+
+            font-size: 10px;
+        }
+
+
+        /* =========================================
+           MAIN AREA
+        ========================================= */
+
+        .dashboard-main {
+            width: calc(100% - 250px);
+
+            margin-left: 250px;
+
+            padding: 32px 42px 60px;
+        }
+
+
+        /* =========================================
+           TOP BAR
+        ========================================= */
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            margin-bottom: 40px;
+        }
+
+
+        .page-title h1 {
+            margin: 0 0 6px;
+
+            font-size: 30px;
+            letter-spacing: -1px;
+        }
+
+
+        .page-title p {
+            margin: 0;
+
+            color: rgba(255, 255, 255, 0.42);
+
+            font-size: 13px;
+        }
+
+
+        .topbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+
+        .search-box {
+            width: 240px;
+
+            display: flex;
+            align-items: center;
+            gap: 9px;
+
+            padding: 11px 14px;
+
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+
+            background: rgba(255, 255, 255, 0.035);
+        }
+
+
+        .search-box span {
+            color: rgba(255, 255, 255, 0.35);
+        }
+
+
+        .search-box input {
+            width: 100%;
+
+            border: none;
+            outline: none;
+
+            background: transparent;
+
+            color: #ffffff;
+
+            font-size: 12px;
+        }
+
+
+        .search-box input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+
+        .notification {
+            width: 40px;
+            height: 40px;
+
+            border-radius: 10px;
+
+            border: 1px solid rgba(255, 255, 255, 0.08);
+
+            background: rgba(255, 255, 255, 0.035);
+
+            color: rgba(255, 255, 255, 0.6);
+
+            cursor: pointer;
+        }
+
+
+        /* =========================================
+           WELCOME CARD
+        ========================================= */
+
+        .welcome-card {
+            position: relative;
+
+            overflow: hidden;
+
+            padding: 30px 32px;
+
+            border-radius: 18px;
+
+            border: 1px solid rgba(255, 196, 0, 0.14);
+
+            background:
+                linear-gradient(
+                    120deg,
+                    rgba(255, 196, 0, 0.11),
+                    rgba(255, 255, 255, 0.025)
+                );
+
+            margin-bottom: 30px;
+        }
+
+
+        .welcome-card::after {
+            content: "";
+
+            position: absolute;
+
+            width: 220px;
+            height: 220px;
+
+            right: -70px;
+            top: -100px;
+
+            border-radius: 50%;
+
+            border: 1px solid rgba(255, 196, 0, 0.12);
+        }
+
+
+        .welcome-label {
+            color: #ffc400;
+
+            font-size: 10px;
+            font-weight: 700;
+
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+
+            margin-bottom: 10px;
+        }
+
+
+        .welcome-card h2 {
+            margin: 0 0 8px;
+
+            font-size: 24px;
+
+            letter-spacing: -0.5px;
+        }
+
+
+        .welcome-card p {
+            margin: 0;
+
+            max-width: 600px;
+
+            color: rgba(255, 255, 255, 0.48);
+
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+
+        /* =========================================
+           SECTION HEADER
+        ========================================= */
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            margin-bottom: 16px;
+        }
+
+
+        .section-header h2 {
+            margin: 0;
+
+            font-size: 17px;
+        }
+
+
+        .section-header a {
+            color: #ffc400;
+
+            font-size: 11px;
+            font-weight: 600;
+
+            text-decoration: none;
+        }
+
+
+        /* =========================================
+           OPPORTUNITY CARDS
+        ========================================= */
+
+        .opportunity-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, minmax(0, 1fr));
+
+            gap: 16px;
+
+            margin-bottom: 35px;
+        }
+
+
+        .opportunity-card {
+            padding: 20px;
+
+            border: 1px solid rgba(255, 255, 255, 0.08);
+
+            border-radius: 15px;
+
+            background: rgba(255, 255, 255, 0.025);
+
+            transition: 0.25s ease;
+        }
+
+
+        .opportunity-card:hover {
+            transform: translateY(-4px);
+
+            border-color: rgba(255, 196, 0, 0.3);
+
+            background: rgba(255, 196, 0, 0.035);
+        }
+
+
+        .opportunity-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            margin-bottom: 18px;
+        }
+
+
+        .opportunity-icon {
+            width: 40px;
+            height: 40px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 10px;
+
+            background: rgba(255, 196, 0, 0.09);
+
+            color: #ffc400;
+
+            font-size: 17px;
+        }
+
+
+        .match {
+            padding: 5px 8px;
+
+            border-radius: 50px;
+
+            background: rgba(255, 196, 0, 0.09);
+
+            color: #ffc400;
+
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+
+        .opportunity-type {
+            margin-bottom: 7px;
+
+            color: rgba(255, 255, 255, 0.35);
+
+            font-size: 10px;
+            font-weight: 700;
+
+            text-transform: uppercase;
+
+            letter-spacing: 1px;
+        }
+
+
+        .opportunity-card h3 {
+            margin: 0 0 8px;
+
+            font-size: 15px;
+        }
+
+
+        .opportunity-card p {
+            margin: 0 0 17px;
+
+            color: rgba(255, 255, 255, 0.4);
+
+            font-size: 11px;
+            line-height: 1.5;
+        }
+
+
+        .opportunity-details {
+            display: flex;
+            gap: 14px;
+
+            color: rgba(255, 255, 255, 0.38);
+
+            font-size: 10px;
+        }
+
+
+        /* =========================================
+           LOWER GRID
+        ========================================= */
+
+        .lower-grid {
+            display: grid;
+
+            grid-template-columns: 1.5fr 1fr;
+
+            gap: 18px;
+        }
+
+
+        .dashboard-panel {
+            padding: 22px;
+
+            border: 1px solid rgba(255, 255, 255, 0.08);
+
+            border-radius: 15px;
+
+            background: rgba(255, 255, 255, 0.025);
+        }
+
+
+        /* CONNECTIONS */
+
+        .connection-row {
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            padding: 14px 0;
+
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+
+        .connection-row:last-child {
+            border-bottom: none;
+        }
+
+
+        .connection-person {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+        }
+
+
+        .connection-avatar {
+            width: 34px;
+            height: 34px;
+
+            border-radius: 9px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: rgba(255, 196, 0, 0.09);
+
+            color: #ffc400;
+
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+
+        .connection-person strong {
+            display: block;
+
+            font-size: 12px;
+
+            margin-bottom: 3px;
+        }
+
+
+        .connection-person span {
+            color: rgba(255, 255, 255, 0.35);
+
+            font-size: 10px;
+        }
+
+
+        .status {
+            color: #ffc400;
+
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+
+        /* QUICK ACTIONS */
+
+        .quick-actions {
+            display: grid;
+
+            grid-template-columns: 1fr 1fr;
+
+            gap: 10px;
+        }
+
+
+        .quick-action {
+            padding: 15px;
+
+            border-radius: 11px;
+
+            border: 1px solid rgba(255, 255, 255, 0.07);
+
+            background: rgba(255, 255, 255, 0.025);
+
+            color: rgba(255, 255, 255, 0.65);
+
+            text-decoration: none;
+
+            font-size: 11px;
+
+            transition: 0.2s ease;
+        }
+
+
+        .quick-action:hover {
+            color: #ffc400;
+
+            border-color: rgba(255, 196, 0, 0.25);
+        }
+
+
+        .quick-action strong {
+            display: block;
+
+            color: #ffffff;
+
+            margin-bottom: 5px;
+
+            font-size: 12px;
+        }
+
+
+        /* =========================================
+           MOBILE
+        ========================================= */
+
+        @media (max-width: 1100px) {
+
+            .opportunity-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .lower-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+
+        @media (max-width: 800px) {
+
+            .sidebar {
+                width: 70px;
+
+                padding: 22px 10px;
+            }
+
+            .dashboard-logo {
+                padding: 0;
+                text-align: center;
+                font-size: 21px;
+            }
+
+            .dashboard-logo span {
+                display: none;
+            }
+
+            .nav-title,
+            .dashboard-nav a span:not(.nav-icon),
+            .profile-info {
+                display: none;
+            }
+
+            .dashboard-nav a {
+                justify-content: center;
+                padding: 13px;
+            }
+
+            .nav-icon {
+                margin: 0;
+            }
+
+            .sidebar-profile {
+                justify-content: center;
+                padding: 14px 0;
+            }
+
+            .dashboard-main {
+                width: calc(100% - 70px);
+                margin-left: 70px;
+                padding: 25px 20px 50px;
+            }
+
+            .search-box {
+                display: none;
+            }
+        }
+
+
+        @media (max-width: 600px) {
+
+            .topbar {
+                align-items: flex-start;
+            }
+
+            .page-title h1 {
+                font-size: 24px;
+            }
+
+            .opportunity-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .welcome-card {
+                padding: 24px;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="dashboard">
+
+
+    <!-- =========================================
+         SIDEBAR
+    ========================================== -->
+
+    <aside class="sidebar">
+
+
+        <div class="dashboard-logo">
+
+            Link<span>Up</span>
+
+        </div>
+
+
+        <div class="nav-title">
+
+            Platform
+
+        </div>
+
+
+        <nav class="dashboard-nav">
+
+
+            <a href="#" class="active">
+
+                <span class="nav-icon">⌂</span>
+
+                <span>Dashboard</span>
+
+            </a>
+
+
+            <a href="#">
+
+                <span class="nav-icon">⌕</span>
+
+                <span>Discover</span>
+
+            </a>
+
+
+           <a href="#" id="opportunitiesLink">
+
+    <span class="nav-icon">◈</span>
+
+    <span>Opportunities</span>
+
+</a>
+
+
+            <a href="#">
+
+                <span class="nav-icon">♢</span>
+
+                <span>Connections</span>
+
+            </a>
+
+
+            <a href="#">
+
+                <span class="nav-icon">✉</span>
+
+                <span>Messages</span>
+
+            </a>
+
+
+            <a href="#">
+
+                <span class="nav-icon">◆</span>
+
+                <span>Partnerships</span>
+
+            </a>
+
+
+        </nav>
+
+
+        <div class="nav-title" style="margin-top: 30px;">
+
+            Account
+
+        </div>
+
+
+        <nav class="dashboard-nav">
+
+
+            <a href="profile.html">
+
+                <span class="nav-icon">◎</span>
+
+                <span>Profile</span>
+
+            </a>
+
+<a href="#" id="discoverLink">
+
+    <span class="nav-icon">⌕</span>
+
+    <span>Discover Events</span>
+
+</a>
+
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+
+            <div class="sidebar-profile">
+
+
+                <div class="profile-avatar">
+
+                    AS
+
+                </div>
+
+
+                <div class="profile-info">
+
+                    <strong>
+
+                        Alex Sharma
+
+                    </strong>
+
+                    <span>
+
+                        Brand Account
+
+                    </span>
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+    </aside>
+
+
+
+    <!-- =========================================
+         MAIN CONTENT
+    ========================================== -->
+
+    <main class="dashboard-main">
+
+
+        <!-- TOP BAR -->
+
+        <header class="topbar">
+
+
+            <div class="page-title">
+
+                <h1>
+
+                    Dashboard
+
+                </h1>
+
+
+                <p>
+
+                    Your LinkUp network at a glance.
+
+                </p>
+
+            </div>
+
+
+            <div class="topbar-actions">
+
+
+                <div class="search-box">
+
+                    <span>⌕</span>
+
+                    <input
+                        type="text"
+                        placeholder="Search opportunities..."
+                    >
+
+                </div>
+
+
+                <button class="notification">
+
+                    ♢
+
+                </button>
+
+
+            </div>
+
+
+        </header>
+
+
+
+        <!-- WELCOME -->
+
+        <section class="welcome-card">
+
+<div class="account-switcher">
+
+    <button class="account-type active" id="brandMode">
+        Brand
+    </button>
+
+    <button class="account-type" id="eventMode">
+        Event Planner
+    </button>
+
+</div>
+
+            
+
+           <h2 id="welcomeTitle">
+
+    Good morning, Alex 👋
+
+</h2>
+
+<p id="welcomeDescription">
+
+    Discover new events, partnerships and opportunities
+    that match your brand and help you build meaningful
+    connections.
+
+</p>
+
+
+        </section>
+
+
+
+        <!-- OPPORTUNITIES -->
+
+        <section>
+
+
+            <div class="section-header">
+
+                <h2>
+
+                    Recommended opportunities
+
+                </h2>
+
+
+                <a href="#">
+
+                    View all →
+
+                </a>
+
+            </div>
+
+
+            <div class="opportunity-grid">
+
+
+                <!-- CARD 1 -->
+
+                <article class="opportunity-card">
+
+
+                    <div class="opportunity-top">
+
+                        <div class="opportunity-icon">
+
+                            ◈
+
+                        </div>
+
+
+                        <div class="match">
+
+                            92% Match
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="opportunity-type">
+
+                        College Event
+
+                    </div>
+
+
+                    <h3>
+
+                        College Cultural Festival
+
+                    </h3>
+
+
+                    <p>
+
+                        Looking for lifestyle and food brands
+                        to partner with a student audience.
+
+                    </p>
+
+
+                    <div class="opportunity-details">
+
+                        <span>📍 Lucknow</span>
+
+                        <span>👥 2,000+</span>
+
+                    </div>
+
+
+                </article>
+
+
+
+                <!-- CARD 2 -->
+
+                <article class="opportunity-card">
+
+
+                    <div class="opportunity-top">
+
+                        <div class="opportunity-icon">
+
+                            ◉
+
+                        </div>
+
+
+                        <div class="match">
+
+                            87% Match
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="opportunity-type">
+
+                        Startup Event
+
+                    </div>
+
+
+                    <h3>
+
+                        Creator & Startup Meetup
+
+                    </h3>
+
+
+                    <p>
+
+                        Seeking technology and lifestyle partners
+                        for an upcoming networking event.
+
+                    </p>
+
+
+                    <div class="opportunity-details">
+
+                        <span>📍 Delhi</span>
+
+                        <span>👥 800+</span>
+
+                    </div>
+
+
+                </article>
+
+
+
+                <!-- CARD 3 -->
+
+                <article class="opportunity-card">
+
+
+                    <div class="opportunity-top">
+
+                        <div class="opportunity-icon">
+
+                            ◆
+
+                        </div>
+
+
+                        <div class="match">
+
+                            81% Match
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="opportunity-type">
+
+                        Exhibition
+
+                    </div>
+
+
+                    <h3>
+
+                        Emerging Lifestyle Expo
+
+                    </h3>
+
+
+                    <p>
+
+                        Looking for emerging brands to showcase
+                        products and connect with consumers.
+
+                    </p>
+
+
+                    <div class="opportunity-details">
+
+                        <span>📍 Mumbai</span>
+
+                        <span>👥 3,500+</span>
+
+                    </div>
+
+
+                </article>
+
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- LOWER CONTENT -->
+
+        <div class="lower-grid">
+
+
+            <!-- CONNECTIONS -->
+
+            <section class="dashboard-panel">
+
+
+                <div class="section-header">
+
+                    <h2>
+
+                        Recent connections
+
+                    </h2>
+
+
+                    <a href="#">
+
+                        View all →
+
+                    </a>
+
+                </div>
+
+
+                <div class="connection-row">
+
+
+                    <div class="connection-person">
+
+
+                        <div class="connection-avatar">
+
+                            CF
+
+                        </div>
+
+
+                        <div>
+
+                            <strong>
+
+                                College Fest 2026
+
+                            </strong>
+
+                            <span>
+
+                                Event Planner
+
+                            </span>
+
+                        </div>
+
+
+                    </div>
+
+
+                    <span class="status">
+
+                        Connected
+
+                    </span>
+
+                </div>
+
+
+                <div class="connection-row">
+
+
+                    <div class="connection-person">
+
+
+                        <div class="connection-avatar">
+
+                            SM
+
+                        </div>
+
+
+                        <div>
+
+                            <strong>
+
+                                Startup Meetup
+
+                            </strong>
+
+                            <span>
+
+                                Event Planner
+
+                            </span>
+
+                        </div>
+
+
+                    </div>
+
+
+                    <span class="status">
+
+                        Pending
+
+                    </span>
+
+                </div>
+
+
+                <div class="connection-row">
+
+
+                    <div class="connection-person">
+
+
+                        <div class="connection-avatar">
+
+                            LE
+
+                        </div>
+
+
+                        <div>
+
+                            <strong>
+
+                                Lifestyle Expo
+
+                            </strong>
+
+                            <span>
+
+                                Event Planner
+
+                            </span>
+
+                        </div>
+
+
+                    </div>
+
+
+                    <span class="status">
+
+                        Connected
+
+                    </span>
+
+                </div>
+
+
+            </section>
+
+
+
+            <!-- QUICK ACTIONS -->
+
+            <section class="dashboard-panel">
+
+
+                <div class="section-header">
+
+                    <h2>
+
+                        Quick actions
+
+                    </h2>
+
+                </div>
+
+
+                <div class="quick-actions">
+
+
+                    <a href="#" class="quick-action">
+
+                        <strong>
+
+                            Discover
+
+                        </strong>
+
+                        Find new opportunities
+
+                    </a>
+
+
+                    <a href="#" class="quick-action">
+
+                        <strong>
+
+                            Profile
+
+                        </strong>
+
+                        Complete your profile
+
+                    </a>
+
+
+                    <a href="#" class="quick-action">
+
+                        <strong>
+
+                            Connections
+
+                        </strong>
+
+                        Manage your network
+
+                    </a>
+
+
+                    <a href="#" class="quick-action">
+
+                        <strong>
+
+                            Messages
+
+                        </strong>
+
+                        Check your inbox
+
+                    </a>
+
+
+                </div>
+
+
+            </section>
+
+
+        </div>
+
+
+    </main>
+
+
+</div>
+
+<script>
+
+    const brandMode = document.getElementById("brandMode");
+    const eventMode = document.getElementById("eventMode");
+
+    const welcomeTitle =
+        document.getElementById("welcomeTitle");
+
+    const welcomeDescription =
+        document.getElementById("welcomeDescription");
+
+    const discoverLink =
+        document.getElementById("discoverLink");
+
+    const opportunitiesLink =
+        document.getElementById("opportunitiesLink");
+
+
+    /* =========================================
+       BRAND MODE
+    ========================================= */
+
+    brandMode.addEventListener("click", function() {
+
+        brandMode.classList.add("active");
+
+        eventMode.classList.remove("active");
+
+
+        welcomeTitle.textContent =
+            "Good morning, Alex 👋";
+
+
+        welcomeDescription.textContent =
+            "Discover new events, partnerships and opportunities that match your brand and help you build meaningful connections.";
+
+
+        discoverLink.querySelector("span:last-child")
+            .textContent = "Discover Events";
+
+
+        opportunitiesLink.querySelector("span:last-child")
+            .textContent = "Opportunities";
+
+    });
+
+
+    /* =========================================
+       EVENT PLANNER MODE
+    ========================================= */
+
+    eventMode.addEventListener("click", function() {
+
+        eventMode.classList.add("active");
+
+        brandMode.classList.remove("active");
+
+
+        welcomeTitle.textContent =
+            "Good morning, Alex 👋";
+
+
+        welcomeDescription.textContent =
+            "Discover brands, create partnership opportunities and build connections for your events.";
+
+
+        discoverLink.querySelector("span:last-child")
+            .textContent = "Discover Brands";
+
+
+        opportunitiesLink.querySelector("span:last-child")
+            .textContent = "My Opportunities";
+
+    });
+
+</script>
+</body>
+
+</html>

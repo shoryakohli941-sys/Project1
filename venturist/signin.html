@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Join LinkUp</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        /* =========================================
+           LINKUP SIGNUP PAGE
+        ========================================= */
+
+        .signup-page {
+            min-height: 100vh;
+            background:
+                radial-gradient(circle at 20% 20%, rgba(255, 196, 0, 0.10), transparent 30%),
+                radial-gradient(circle at 80% 80%, rgba(255, 196, 0, 0.07), transparent 30%),
+                #050505;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .signup-container {
+            width: 100%;
+            max-width: 1000px;
+
+            display: grid;
+            grid-template-columns: 0.9fr 1.1fr;
+
+            background: rgba(255, 255, 255, 0.035);
+            border: 1px solid rgba(255, 255, 255, 0.09);
+            border-radius: 28px;
+
+            overflow: hidden;
+
+            box-shadow:
+                0 30px 80px rgba(0, 0, 0, 0.5),
+                0 0 60px rgba(255, 196, 0, 0.05);
+
+            backdrop-filter: blur(20px);
+        }
+
+        /* LEFT SIDE */
+
+        .signup-left {
+            padding: 55px 45px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(255, 196, 0, 0.13),
+                    rgba(255, 196, 0, 0.025)
+                );
+
+            border-right: 1px solid rgba(255, 255, 255, 0.08);
+
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .signup-logo {
+            font-size: 30px;
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: -1px;
+        }
+
+        .signup-logo span {
+            color: #ffc400;
+        }
+
+        .signup-left-content {
+            margin: 70px 0;
+        }
+
+        .signup-label {
+            display: inline-block;
+
+            padding: 7px 12px;
+            border-radius: 50px;
+
+            background: rgba(255, 196, 0, 0.1);
+            border: 1px solid rgba(255, 196, 0, 0.2);
+
+            color: #ffc400;
+            font-size: 11px;
+            font-weight: 700;
+
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+
+            margin-bottom: 22px;
+        }
+
+        .signup-left h1 {
+            color: #ffffff;
+            font-size: clamp(36px, 4vw, 55px);
+            line-height: 1.05;
+            letter-spacing: -2px;
+            margin-bottom: 22px;
+        }
+
+        .signup-left h1 span {
+            color: #ffc400;
+        }
+
+        .signup-left p {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 15px;
+            line-height: 1.7;
+            max-width: 380px;
+        }
+
+        .signup-footer-text {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 13px;
+        }
+
+        /* RIGHT SIDE */
+
+        .signup-right {
+            padding: 55px 50px;
+            background: rgba(0, 0, 0, 0.25);
+        }
+
+        .signup-heading {
+            margin-bottom: 32px;
+        }
+
+        .signup-heading h2 {
+            color: #ffffff;
+            font-size: 30px;
+            margin-bottom: 8px;
+        }
+
+        .signup-heading p {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 14px;
+        }
+
+        /* ROLE SELECTION */
+
+        .role-title {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .role-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+
+        .role-card {
+            position: relative;
+
+            padding: 18px;
+
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+
+            background: rgba(255, 255, 255, 0.025);
+
+            cursor: pointer;
+
+            transition: 0.25s ease;
+        }
+
+        .role-card:hover {
+            border-color: rgba(255, 196, 0, 0.5);
+            background: rgba(255, 196, 0, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .role-card.active {
+            border-color: #ffc400;
+            background: rgba(255, 196, 0, 0.08);
+            box-shadow: 0 0 25px rgba(255, 196, 0, 0.08);
+        }
+
+        .role-icon {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .role-card h3 {
+            color: #ffffff;
+            font-size: 15px;
+            margin-bottom: 5px;
+        }
+
+        .role-card p {
+            color: rgba(255, 255, 255, 0.42);
+            font-size: 11px;
+            line-height: 1.5;
+        }
+
+        /* FORM */
+
+        .signup-form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .form-group label {
+            color: rgba(255, 255, 255, 0.65);
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+
+            padding: 13px 14px;
+
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+
+            background: rgba(255, 255, 255, 0.04);
+
+            color: #ffffff;
+            outline: none;
+
+            font-size: 13px;
+
+            transition: 0.2s ease;
+        }
+
+        .form-group input::placeholder {
+            color: rgba(255, 255, 255, 0.25);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #ffc400;
+            box-shadow: 0 0 0 3px rgba(255, 196, 0, 0.08);
+        }
+
+        .form-group select {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .form-group select option {
+            background: #111111;
+            color: #ffffff;
+        }
+
+        /* TERMS */
+
+        .terms {
+            display: flex;
+            align-items: flex-start;
+            gap: 9px;
+
+            margin-top: 2px;
+        }
+
+        .terms input {
+            margin-top: 3px;
+            accent-color: #ffc400;
+        }
+
+        .terms label {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 11px;
+            line-height: 1.5;
+        }
+
+        .terms a {
+            color: #ffc400;
+            text-decoration: none;
+        }
+
+        /* BUTTON */
+
+        .create-account-btn {
+            width: 100%;
+
+            padding: 14px;
+
+            border: none;
+            border-radius: 11px;
+
+            background: #ffc400;
+            color: #080808;
+
+            font-size: 14px;
+            font-weight: 800;
+
+            cursor: pointer;
+
+            transition: 0.25s ease;
+
+            margin-top: 4px;
+        }
+
+        .create-account-btn:hover {
+            background: #ffd43b;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(255, 196, 0, 0.2);
+        }
+
+        /* LOGIN */
+
+        .login-text {
+            text-align: center;
+
+            margin-top: 22px;
+
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 12px;
+        }
+
+        .login-text a {
+            color: #ffc400;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 800px) {
+
+            .signup-container {
+                grid-template-columns: 1fr;
+            }
+
+            .signup-left {
+                padding: 35px 30px;
+                border-right: none;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            }
+
+            .signup-left-content {
+                margin: 40px 0;
+            }
+
+            .signup-right {
+                padding: 35px 30px;
+            }
+        }
+
+        @media (max-width: 500px) {
+
+            .role-options,
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .signup-page {
+                padding: 15px;
+            }
+
+            .signup-left,
+            .signup-right {
+                padding: 30px 22px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <main class="signup-page">
+
+        <div class="signup-container">
+
+            <!-- LEFT SIDE -->
+            <section class="signup-left">
+
+                <div class="signup-logo">
+                    Link<span>Up</span>
+                </div>
+
+                <div class="signup-left-content">
+
+                    <span class="signup-label">
+                        Join the Network
+                    </span>
+
+                    <h1>
+                        Build the right
+                        <span>connections.</span>
+                    </h1>
+
+                    <p>
+                        Whether you're a growing brand or an event planner,
+                        LinkUp helps you discover meaningful partnerships
+                        and turn opportunities into collaborations.
+                    </p>
+
+                </div>
+
+                <div class="signup-footer-text">
+                    Brands × Events × Opportunities
+                </div>
+
+            </section>
+
+
+            <!-- RIGHT SIDE -->
+            <section class="signup-right">
+
+                <div class="signup-heading">
+
+                    <h2>Create your account</h2>
+
+                    <p>
+                        First, tell us how you'll use LinkUp.
+                    </p>
+
+                </div>
+
+
+                <!-- ROLE SELECTION -->
+
+                <div class="role-title">
+                    I am a...
+                </div>
+
+                <div class="role-options">
+
+                    <div class="role-card active" id="brandRole">
+
+                        <div class="role-icon">
+                            ◈
+                        </div>
+
+                        <h3>Brand</h3>
+
+                        <p>
+                            Discover events, partnerships and
+                            new audiences.
+                        </p>
+
+                    </div>
+
+
+                    <div class="role-card" id="eventRole">
+
+                        <div class="role-icon">
+                            ◉
+                        </div>
+
+                        <h3>Event Planner</h3>
+
+                        <p>
+                            Find brands, sponsors and
+                            collaboration partners.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- SIGNUP FORM -->
+
+                <form class="signup-form" id="signupForm">
+
+                    <div class="form-row">
+
+                        <div class="form-group">
+
+                            <label for="firstName">
+                                First name
+                            </label>
+
+                            <input
+                                type="text"
+                                id="firstName"
+                                placeholder="Alex"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="lastName">
+                                Last name
+                            </label>
+
+                            <input
+                                type="text"
+                                id="lastName"
+                                placeholder="Sharma"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="email">
+                            Email address
+                        </label>
+
+                        <input
+                            type="email"
+                            id="email"
+                            placeholder="you@example.com"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- BRAND FIELD -->
+
+                    <div class="form-group" id="brandNameGroup">
+
+                        <label for="brandName">
+                            Brand name
+                        </label>
+
+                        <input
+                            type="text"
+                            id="brandName"
+                            placeholder="Your brand name"
+                        >
+
+                    </div>
+
+
+                    <!-- EVENT FIELD -->
+
+                    <div class="form-group" id="eventNameGroup" style="display: none;">
+
+                        <label for="eventName">
+                            Organization / Event name
+                        </label>
+
+                        <input
+                            type="text"
+                            id="eventName"
+                            placeholder="Your organization or event"
+                        >
+
+                    </div>
+
+
+                    <div class="form-row">
+
+                        <div class="form-group">
+
+                            <label for="location">
+                                Location
+                            </label>
+
+                            <input
+                                type="text"
+                                id="location"
+                                placeholder="Lucknow"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="category" id="categoryLabel">
+                                Brand category
+                            </label>
+
+                            <select id="category">
+
+                                <option value="">
+                                    Select
+                                </option>
+
+                                <option>
+                                    Fashion
+                                </option>
+
+                                <option>
+                                    Food & Beverage
+                                </option>
+
+                                <option>
+                                    Technology
+                                </option>
+
+                                <option>
+                                    Lifestyle
+                                </option>
+
+                                <option>
+                                    Beauty
+                                </option>
+
+                                <option>
+                                    Education
+                                </option>
+
+                                <option>
+                                    Other
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-row">
+
+                        <div class="form-group">
+
+                            <label for="password">
+                                Password
+                            </label>
+
+                            <input
+                                type="password"
+                                id="password"
+                                placeholder="Create a password"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="confirmPassword">
+                                Confirm password
+                            </label>
+
+                            <input
+                                type="password"
+                                id="confirmPassword"
+                                placeholder="Confirm password"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="terms">
+
+                        <input
+                            type="checkbox"
+                            id="terms"
+                            required
+                        >
+
+                        <label for="terms">
+                            I agree to the LinkUp
+                            <a href="#">Terms</a>
+                            and
+                            <a href="#">Privacy Policy</a>.
+                        </label>
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="create-account-btn"
+                    >
+                        Create Account →
+                    </button>
+
+                </form>
+
+
+                <div class="login-text">
+
+                    Already have an account?
+                    <a href="login.html">
+                        Sign in
+                    </a>
+
+                </div>
+
+            </section>
+
+        </div>
+
+    </main>
+
+
+    <!-- ROLE SWITCHING -->
+    <script>
+
+        const brandRole = document.getElementById("brandRole");
+        const eventRole = document.getElementById("eventRole");
+
+        const brandNameGroup = document.getElementById("brandNameGroup");
+        const eventNameGroup = document.getElementById("eventNameGroup");
+
+        const categoryLabel = document.getElementById("categoryLabel");
+
+        const category = document.getElementById("category");
+
+
+        // BRAND SELECTED
+
+        brandRole.addEventListener("click", function() {
+
+            brandRole.classList.add("active");
+            eventRole.classList.remove("active");
+
+            brandNameGroup.style.display = "flex";
+            eventNameGroup.style.display = "none";
+
+            categoryLabel.textContent = "Brand category";
+
+            category.innerHTML = `
+                <option value="">Select</option>
+                <option>Fashion</option>
+                <option>Food & Beverage</option>
+                <option>Technology</option>
+                <option>Lifestyle</option>
+                <option>Beauty</option>
+                <option>Education</option>
+                <option>Other</option>
+            `;
+
+        });
+
+
+        // EVENT PLANNER SELECTED
+
+        eventRole.addEventListener("click", function() {
+
+            eventRole.classList.add("active");
+            brandRole.classList.remove("active");
+
+            brandNameGroup.style.display = "none";
+            eventNameGroup.style.display = "flex";
+
+            categoryLabel.textContent = "Event type";
+
+            category.innerHTML = `
+                <option value="">Select</option>
+                <option>College Event</option>
+                <option>Conference</option>
+                <option>Festival</option>
+                <option>Workshop</option>
+                <option>Sports Event</option>
+                <option>Exhibition</option>
+                <option>Networking Event</option>
+                <option>Other</option>
+            `;
+
+        });
+
+
+        // TEMPORARY FORM SUBMISSION
+
+        document.getElementById("signupForm").addEventListener("submit", function(event) {
+
+            event.preventDefault();
+
+            alert("Account setup will be connected to the LinkUp database next!");
+
+        });
+
+    </script>
+
+
+<script>
+    const SUPABASE_URL =
+        "https://blnlhdjupzqhzruzaciy.supabase.co";
+
+    const SUPABASE_KEY =
+        "sb_publishable_ICdoI9SpZCVgfkyHJ4yCoQ_GYsVYdhA";
+
+    const supabaseClient =
+        window.supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_KEY
+        );
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</body>
+</html>
