@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="theme-color" content="#FFEFB3">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Opportunity | LinkUp</title>
+    <script>document.documentElement.classList.add("js");</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Leckerli+One&display=swap">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<div class="app dashboard">
+
+    <aside class="sidebar">
+        <a href="dashboard.html" class="logo dashboard-logo">Link<em>Up</em></a>
+
+        <div class="sidebar-nav">
+            <div class="nav-title">Platform</div>
+            <nav class="dashboard-nav" aria-label="Platform">
+                <a href="dashboard.html"><span class="nav-icon">01</span><span>Dashboard</span></a>
+                <a href="discover.html" class="active" aria-current="page"><span class="nav-icon">02</span><span>Discover Events</span></a>
+                <a href="opportunities.html"><span class="nav-icon">03</span><span>Opportunities</span></a>
+                <a href="connections.html"><span class="nav-icon">04</span><span>Connections</span></a>
+                <a href="messages.html"><span class="nav-icon">05</span><span>Messages</span></a>
+                <a href="partnerships.html"><span class="nav-icon">06</span><span>Partnerships</span></a>
+            </nav>
+            <div class="nav-title">Account</div>
+            <nav class="dashboard-nav" aria-label="Account">
+                <a href="profile.html"><span class="nav-icon">07</span><span>Profile</span></a>
+                <a href="#" id="signOutLink"><span class="nav-icon">08</span><span>Sign out</span></a>
+            </nav>
+        </div>
+
+        <div class="sidebar-bottom">
+            <a href="profile.html" class="sidebar-profile">
+                <div class="profile-avatar" id="sidebarAvatar">…</div>
+                <div class="sidebar-profile-text">
+                    <strong id="sidebarName">Loading…</strong>
+                    <span id="sidebarRoleLabel">…</span>
+                </div>
+            </a>
+        </div>
+    </aside>
+
+    <main class="dashboard-main">
+
+        <header class="topbar">
+            <div class="page-title">
+                <h1>Opportunity</h1>
+                <p>Partnership details and event context.</p>
+            </div>
+            <a href="discover.html" class="back-link" style="margin-bottom: 0;">&larr; Back to Discover</a>
+        </header>
+
+        <div id="opportunityContainer">
+
+            <section class="profile-card" data-reveal>
+                <div class="profile-card-head">
+                    <h2 id="oppTitle">Loading…</h2>
+                    <span class="status" id="oppStatus">&hellip;</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Type</span>
+                    <span class="info-value" id="oppType">&hellip;</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Budget</span>
+                    <span class="info-value" id="oppBudget">&hellip;</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Audience</span>
+                    <span class="info-value" id="oppAudience">&hellip;</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Description</span>
+                    <span class="info-value" id="oppDescription">&hellip;</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Event</span>
+                    <span class="info-value" id="oppEvent">&hellip;</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Event date</span>
+                    <span class="info-value" id="oppEventDate">&hellip;</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Location</span>
+                    <span class="info-value" id="oppLocation">&hellip;</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Organizer</span>
+                    <span class="info-value" id="oppOrganizer">&hellip;</span>
+                </div>
+            </section>
+
+            <section class="profile-card" id="interestCard" data-reveal>
+                <div class="profile-card-head">
+                    <h2>Interested?</h2>
+                </div>
+                <p id="interestNote" class="muted" style="font-size: var(--fs-sm); line-height: 1.5; max-width: 52ch;">Loading…</p>
+                <div class="btn-row" id="interestActions" style="display: none;">
+                    <button class="btn btn-primary" id="interestBtn" type="button">I'm Interested</button>
+                </div>
+                <p id="interestMessage" class="form-message" role="status" aria-live="polite"></p>
+            </section>
+
+        </div>
+
+    </main>
+</div>
+
+<script src="../js/script.js"></script>
+
+<!-- POCKETBASE SDK + SHARED CONFIG + AUTH GUARD (load in this order) -->
+<script src="https://cdn.jsdelivr.net/npm/pocketbase@0.28.1/dist/pocketbase.umd.js"></script>
+<script src="../js/pocketbase.js"></script>
+<script src="../js/auth-guard.js"></script>
+
+<!-- OPPORTUNITY LOGIC -->
+
+<script>
+
+    function showOppMessage(text, isError) {
+        const message = document.getElementById("interestMessage");
+        message.textContent = text;
+        message.classList.remove("error", "success");
+        message.classList.add(isError ? "error" : "success");
+        message.style.display = "block";
+    }
+
+    function hideOppMessage() {
+        const message = document.getElementById("interestMessage");
+        message.style.display = "none";
+    }
+
+    function formatDate(value) {
+        if (!value) return "Date TBA";
+        const d = new Date(value);
+        if (isNaN(d.getTime())) return "Date TBA";
+        return d.toLocaleDateString("en-IN", {
+            day: "numeric",
+            month: "short",
+            year: "numeric"
+        });
+    }
+
+    // Turn a PocketBase error into a readable message (same pattern as profile.html).
+    function getErrorMessage(err) {
+        const data = err && err.response && err.response.data;
+        if (data) {
+            for (const field of Object.keys(data)) {
+                const fieldError = data[field];
+                if (fieldError && fieldError.message) {
+                    return fieldError.message;
+                }
+            }
+        }
+        return (err && err.message) || "Something went wrong. Please try again.";
+    }
+
+    function renderOpportunity(opp, profile) {
+        const event = opp.event_id || null;
+        const organizer = opp.organizer_id || null;
+
+        const organizerLabel =
+            organizer && organizer.name ? organizer.name : "LinkUp event organizer";
+        const organizerId =
+            organizer && organizer.id ? organizer.id : opp.organizer_id;
+
+        document.getElementById("oppTitle").textContent =
+            opp.title || "Untitled opportunity";
+
+        const statusEl = document.getElementById("oppStatus");
+        statusEl.textContent = opp.status === "open" ? "Open" : "Closed";
+        statusEl.classList.toggle("status--pending", opp.status !== "open");
+
+        document.getElementById("oppType").textContent = opp.type || "—";
+        document.getElementById("oppBudget").textContent =
+            opp.budget ? "$" + opp.budget : "Not shared yet";
+        document.getElementById("oppAudience").textContent =
+            opp.audience || "Not specified";
+        document.getElementById("oppDescription").textContent =
+            opp.description || "No description provided yet.";
+
+        document.getElementById("oppEvent").textContent =
+            event && event.name ? event.name : "Event TBA";
+        document.getElementById("oppEventDate").textContent =
+            event ? formatDate(event.event_date) : "Date TBA";
+        document.getElementById("oppLocation").textContent =
+            event && event.location ? event.location : "Location TBA";
+        document.getElementById("oppOrganizer").textContent =
+            organizerLabel;
+
+        // Interest is for brand users only (the planner is the owner-side).
+        const interestCard = document.getElementById("interestCard");
+        const interestActions = document.getElementById("interestActions");
+        const interestBtn = document.getElementById("interestBtn");
+        const interestNote = document.getElementById("interestNote");
+
+        if (profile.role === "brand") {
+            interestNote.textContent =
+                "Tell the organizer you'd like to collaborate on this opportunity. " +
+                "They'll see your interest as a pending request.";
+            interestActions.style.display = "flex";
+
+            interestBtn.onclick = async function () {
+                hideOppMessage();
+                interestBtn.disabled = true;
+                interestBtn.textContent = "Sending…";
+
+                try {
+                    await window.pb.collection("connections").create({
+                        from_user: profile.id,
+                        to_user: organizerId,
+                        opportunity: opp.id,
+                        status: "pending"
+                    });
+                } catch (err) {
+                    showOppMessage("Could not send interest: " + getErrorMessage(err), true);
+                    interestBtn.disabled = false;
+                    interestBtn.textContent = "I'm Interested";
+                    return;
+                }
+
+                showOppMessage("Interest sent to " + organizerLabel + "! They'll review it on their connections page. The Connections page ships in the next phase.", false);
+                interestActions.style.display = "none";
+            };
+        } else {
+            const isOwner = (typeof organizerId === "string") && organizerId === profile.id;
+            interestNote.textContent = isOwner
+                ? "This is your opportunity. Brands who are interested will appear as pending connections."
+                : "Only brand accounts express interest on an opportunity. As an event planner, you can watch for incoming connections instead.";
+            interestActions.style.display = "none";
+        }
+    }
+
+    async function loadOpportunity() {
+        const auth = await requireSession();
+        if (auth === null) return;
+
+        const profile = auth.profile;
+        const fullName = profile.name ? profile.name.trim() : "";
+        const displayName = fullName || (profile.email ? profile.email.split("@")[0] : "");
+
+        document.getElementById("sidebarAvatar").textContent =
+            getInitials(fullName || "LinkUp User");
+        document.getElementById("sidebarName").textContent =
+            displayName || "LinkUp User";
+        document.getElementById("sidebarRoleLabel").textContent =
+            profile.role === "event_planner"
+                ? "Event Planner Account"
+                : "Brand Account";
+
+        // Opportunity id comes from the URL: opportunity.html?id=<id>
+        const params = new URLSearchParams(window.location.search);
+        const oppId = params.get("id");
+
+        if (!oppId) {
+            document.getElementById("oppTitle").textContent = "No opportunity selected";
+            document.getElementById("oppStatus").textContent = "";
+            document.getElementById("opportunityContainer").querySelector(".profile-card").firstElementChild.nextElementSibling.hidden = true;
+            document.getElementById("interestNote").textContent =
+                "This page needs an opportunity id in the URL. Head back to Discover and open a listing.";
+            return;
+        }
+
+        let opp;
+        try {
+            opp = await window.pb.collection("opportunities").getOne(oppId, {
+                expand: "event_id,organizer_id"
+            });
+        } catch (err) {
+            document.getElementById("oppTitle").textContent = "Opportunity not found";
+            document.getElementById("oppStatus").textContent = "";
+            document.getElementById("interestNote").textContent =
+                "This opportunity could not be loaded. It may have been removed.";
+            console.error("Could not load opportunity:", err);
+            return;
+        }
+
+        renderOpportunity(opp, profile);
+    }
+
+    document.getElementById("signOutLink")
+        .addEventListener("click", function (event) {
+            event.preventDefault();
+            signOut();
+        });
+
+    loadOpportunity().catch(function (error) {
+        console.error("Opportunity failed to load:", error);
+    });
+
+</script>
+</body>
+</html>

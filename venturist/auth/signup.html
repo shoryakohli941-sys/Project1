@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="theme-color" content="#FFEFB3">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join LinkUp</title>
+    <script>document.documentElement.classList.add("js");</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Leckerli+One&display=swap">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+    <main class="auth signup-page">
+
+        <aside class="auth-aside">
+            <a href="../index.html" class="logo">Link<em>Up</em></a>
+            <div class="auth-aside-body">
+                <p class="eyebrow" data-reveal>Join the network</p>
+                <h1 class="h1" data-reveal>Build the right <em>connections.</em></h1>
+                <p data-reveal>Whether you're a growing brand or an event planner, LinkUp helps you find partners and turn opportunities into collaborations.</p>
+            </div>
+            <div class="auth-visual" data-tilt="6" data-reveal="fade" aria-hidden="true">
+                <div class="stack">
+                    <article class="stack-card">
+                        <span class="eyebrow">Event · New Delhi</span>
+                        <h3 class="h3">Creator &amp; Startup Meetup</h3>
+                        <div class="stack-meta"><span>500+ attendees</span><span>Sample</span></div>
+                    </article>
+                    <article class="stack-card">
+                        <span class="eyebrow">Brand · seeking events</span>
+                        <h3 class="h3">Emerging lifestyle brand</h3>
+                        <div class="stack-meta"><span>Community events</span><span>Sample</span></div>
+                    </article>
+                </div>
+            </div>
+            <p class="auth-foot">Brands × Events × Opportunities</p>
+        </aside>
+
+        <section class="auth-main">
+            <div class="auth-panel">
+
+                <div class="auth-heading" data-reveal>
+                    <h2 class="h2">Create your account</h2>
+                    <p>First, tell us how you'll use LinkUp.</p>
+                </div>
+
+                <div class="role-fieldset" role="group" aria-labelledby="roleTitle" data-reveal>
+                    <span class="role-title" id="roleTitle">I am a…</span>
+                    <div class="role-options">
+                        <button type="button" class="role-card active" id="brandRole">
+                            <span class="role-mark" aria-hidden="true"></span>
+                            <span class="role-name">Brand</span>
+                            <span class="role-desc">Discover events, partnerships and new audiences.</span>
+                        </button>
+                        <button type="button" class="role-card" id="eventRole">
+                            <span class="role-mark" aria-hidden="true"></span>
+                            <span class="role-name">Event planner</span>
+                            <span class="role-desc">Find brands, sponsors and collaboration partners.</span>
+                        </button>
+                    </div>
+                </div>
+
+                <form class="form signup-form" id="signupForm" data-reveal>
+
+                    <div class="form-row">
+                        <div class="field form-group">
+                            <label for="firstName">First name</label>
+                            <input type="text" id="firstName" placeholder="Alex" autocomplete="given-name" required>
+                        </div>
+                        <div class="field form-group">
+                            <label for="lastName">Last name</label>
+                            <input type="text" id="lastName" placeholder="Sharma" autocomplete="family-name" required>
+                        </div>
+                    </div>
+
+                    <div class="field form-group">
+                        <label for="email">Email address</label>
+                        <input type="email" id="email" placeholder="you@example.com" autocomplete="email" required>
+                    </div>
+
+                    <div class="field form-group" id="brandNameGroup">
+                        <label for="brandName">Brand name</label>
+                        <input type="text" id="brandName" placeholder="Your brand name" autocomplete="organization">
+                    </div>
+
+                    <div class="field form-group" id="eventNameGroup" style="display: none;">
+                        <label for="eventName">Organization / event name</label>
+                        <input type="text" id="eventName" placeholder="Your organization or event">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="field form-group">
+                            <label for="location">Location</label>
+                            <input type="text" id="location" placeholder="Lucknow" autocomplete="address-level2" required>
+                        </div>
+                        <div class="field form-group">
+                            <label for="category" id="categoryLabel">Brand category</label>
+                            <select id="category">
+                                <option value="">Select</option>
+                                <option>Fashion</option>
+                                <option>Food &amp; Beverage</option>
+                                <option>Technology</option>
+                                <option>Lifestyle</option>
+                                <option>Beauty</option>
+                                <option>Education</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="field form-group">
+                            <label for="password">Password</label>
+                            <input type="password" id="password" placeholder="At least 8 characters" autocomplete="new-password" required>
+                        </div>
+                        <div class="field form-group">
+                            <label for="confirmPassword">Confirm password</label>
+                            <input type="password" id="confirmPassword" placeholder="Repeat password" autocomplete="new-password" required>
+                        </div>
+                    </div>
+
+                    <div class="check terms">
+                        <input type="checkbox" id="terms" required>
+                        <label for="terms">I agree to the LinkUp <a href="#">Terms</a> and <a href="#">Privacy Policy</a>.</label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block create-account-btn">Create Account →</button>
+
+                    <p id="signupMessage" class="form-message signup-message" role="status" aria-live="polite"></p>
+
+                </form>
+
+                <p class="auth-switch login-text">Already have an account? <a href="login.html">Sign in</a></p>
+
+            </div>
+        </section>
+    </main>
+
+<script src="../js/script.js"></script>
+
+<!-- POCKETBASE SDK (must load before the shared config) -->
+<script src="https://cdn.jsdelivr.net/npm/pocketbase@0.28.1/dist/pocketbase.umd.js"></script>
+
+<!-- SHARED POCKETBASE CONFIG -->
+<script src="../js/pocketbase.js"></script>
+
+    <!-- ROLE SWITCHING -->
+    <script>
+
+        const brandRole = document.getElementById("brandRole");
+        const eventRole = document.getElementById("eventRole");
+
+        const brandNameGroup = document.getElementById("brandNameGroup");
+        const eventNameGroup = document.getElementById("eventNameGroup");
+
+        const categoryLabel = document.getElementById("categoryLabel");
+
+        const category = document.getElementById("category");
+
+
+        // BRAND SELECTED
+
+        brandRole.addEventListener("click", function() {
+
+            brandRole.classList.add("active");
+            eventRole.classList.remove("active");
+
+            brandNameGroup.style.display = "flex";
+            eventNameGroup.style.display = "none";
+
+            categoryLabel.textContent = "Brand category";
+
+            category.innerHTML = `
+                <option value="">Select</option>
+                <option>Fashion</option>
+                <option>Food & Beverage</option>
+                <option>Technology</option>
+                <option>Lifestyle</option>
+                <option>Beauty</option>
+                <option>Education</option>
+                <option>Other</option>
+            `;
+
+        });
+
+
+        // EVENT PLANNER SELECTED
+
+        eventRole.addEventListener("click", function() {
+
+            eventRole.classList.add("active");
+            brandRole.classList.remove("active");
+
+            brandNameGroup.style.display = "none";
+            eventNameGroup.style.display = "flex";
+
+            categoryLabel.textContent = "Event type";
+
+            category.innerHTML = `
+                <option value="">Select</option>
+                <option>College Event</option>
+                <option>Conference</option>
+                <option>Festival</option>
+                <option>Workshop</option>
+                <option>Sports Event</option>
+                <option>Exhibition</option>
+                <option>Networking Event</option>
+                <option>Other</option>
+            `;
+
+        });
+
+
+        // SIGNUP MESSAGE HELPER
+
+        const signupMessage = document.getElementById("signupMessage");
+        const submitButton = document.querySelector(".create-account-btn");
+
+        function showSignupMessage(text, isError) {
+
+            signupMessage.textContent = text;
+            signupMessage.classList.remove("error", "success");
+            signupMessage.classList.add(isError ? "error" : "success");
+            signupMessage.style.display = "block";
+
+        }
+
+
+        // REAL POCKETBASE SIGNUP
+
+        document.getElementById("signupForm").addEventListener("submit", async function(event) {
+
+            event.preventDefault();
+
+            // 1. Read the form fields
+
+            const firstName = document.getElementById("firstName").value.trim();
+            const lastName = document.getElementById("lastName").value.trim();
+            const email = document.getElementById("email").value.trim();
+            const password = document.getElementById("password").value;
+            const confirmPassword = document.getElementById("confirmPassword").value;
+            const location = document.getElementById("location").value.trim();
+            const category = document.getElementById("category").value;
+
+            // 2. Work out the selected role
+
+            const isEventPlanner = eventRole.classList.contains("active");
+            const role = isEventPlanner ? "event_planner" : "brand";
+
+            const organizationName = isEventPlanner
+                ? document.getElementById("eventName").value.trim()
+                : document.getElementById("brandName").value.trim();
+
+            const fullName = firstName + " " + lastName;
+
+            // 3. Simple checks before sending anything
+
+            if (password !== confirmPassword) {
+                showSignupMessage("Passwords do not match.", true);
+                return;
+            }
+
+            if (password.length < 8) {
+                showSignupMessage("Password must be at least 8 characters long.", true);
+                return;
+            }
+
+            if (!organizationName) {
+                showSignupMessage("Please enter your brand or organization name.", true);
+                return;
+            }
+
+            submitButton.disabled = true;
+            submitButton.textContent = "Creating Account...";
+            showSignupMessage("Creating your account...", false);
+
+            // Turn a PocketBase error into a readable message.
+
+            function getErrorMessage(err) {
+
+                const data = err &&
+                    err.response &&
+                    err.response.data;
+
+                if (data) {
+                    for (const field of Object.keys(data)) {
+                        const fieldError = data[field];
+                        if (fieldError && fieldError.message) {
+                            return fieldError.message;
+                        }
+                    }
+                }
+
+                return (err && err.message) || "Something went wrong. Please try again.";
+
+            }
+
+            // 4. Create the user + profile.
+            //    In PocketBase the profile fields live on the user record itself,
+            //    so one create call is all we need (no separate table).
+
+            try {
+
+                await window.pb
+                    .collection("users")
+                    .create({
+                        email: email,
+                        password: password,
+                        passwordConfirm: password,
+                        name: fullName,
+                        role: role,
+                        organization_name: organizationName,
+                        category: category,
+                        location: location
+                    });
+
+            } catch (err) {
+
+                showSignupMessage(getErrorMessage(err), true);
+                submitButton.disabled = false;
+                submitButton.textContent = "Create Account →";
+                return;
+
+            }
+
+            // 5. Move on to the login page.
+            //    PocketBase does not require email confirmation by default.
+
+            showSignupMessage(
+                "Account created! Sign in to continue.",
+                false
+            );
+
+            setTimeout(function() {
+                window.location.href = "login.html?created=1";
+            }, 1200);
+
+        });
+
+    </script>
+
+</body>
+</html>

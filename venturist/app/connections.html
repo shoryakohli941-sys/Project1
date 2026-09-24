@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="theme-color" content="#FFEFB3">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connections | LinkUp</title>
+    <script>document.documentElement.classList.add("js");</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Leckerli+One&display=swap">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<div class="app dashboard">
+
+    <aside class="sidebar">
+        <a href="dashboard.html" class="logo dashboard-logo">Link<em>Up</em></a>
+
+        <div class="sidebar-inner">
+            <div class="nav-title">Platform</div>
+            <nav class="dashboard-nav" aria-label="Platform">
+                <a href="dashboard.html"><span class="nav-icon">01</span><span>Dashboard</span></a>
+                <a href="discover.html"><span class="nav-icon">02</span><span>Discover Events</span></a>
+                <a href="opportunities.html"><span class="nav-icon">03</span><span>Opportunities</span></a>
+                <a href="connections.html" class="active" aria-current="page"><span class="nav-icon">04</span><span>Connections</span></a>
+                <a href="messages.html"><span class="nav-icon">05</span><span>Messages</span></a>
+                <a href="partnerships.html"><span class="nav-icon">06</span><span>Partnerships</span></a>
+            </nav>
+            <div class="nav-title">Account</div>
+            <nav class="dashboard-nav" aria-label="Account">
+                <a href="profile.html"><span class="nav-icon">07</span><span>Profile</span></a>
+                <a href="#" id="signOutLink"><span class="nav-icon">08</span><span>Sign out</span></a>
+            </nav>
+        </div>
+
+        <div class="sidebar-bottom">
+            <a href="profile.html" class="sidebar-profile">
+                <div class="profile-avatar" id="sidebarAvatar">…</div>
+                <div class="sidebar-profile-text">
+                    <strong id="sidebarName">Loading…</strong>
+                    <span id="sidebarRoleLabel">…</span>
+                </div>
+            </a>
+        </div>
+    </aside>
+
+    <main class="dashboard-main">
+
+        <header class="topbar">
+            <div class="page-title">
+                <h1>Connections</h1>
+                <p id="connectionsDescription">People interested in your events and opportunities.</p>
+            </div>
+        </header>
+
+        <section class="dash-section welcome-card" id="plannerView">
+            <div class="section-header">
+                <h2>Incoming interest</h2>
+                <div class="section-header-meta">
+                    <span class="stamp" id="connectionCount">Loading…</span>
+                </div>
+            </div>
+            <p class="muted" style="font-size: var(--fs-sm);" id="plannerHint">
+                When a brand marks "I'm Interested" on one of your opportunities, it
+                shows up here as pending. Accept to open a partnership, or decline to
+                close it.
+            </p>
+            <div class="connection-list" id="connectionList"></div>
+            <div class="empty-note" id="connectionEmpty" data-reveal style="display: none;">
+                <h3>No connections yet</h3>
+                <p>When a brand expresses interest in your opportunity, you'll see it
+                   here and can accept or decline it.</p>
+            </div>
+        </section>
+
+        <section class="dash-section welcome-card" id="brandView" style="display: none;">
+            <div class="section-header">
+                <h2>Your interest requests</h2>
+                <div class="section-header-meta">
+                    <span class="stamp" id="brandRequestCount">Loading…</span>
+                </div>
+            </div>
+            <p class="muted" style="font-size: var(--fs-sm);">
+                Requests you've sent to planners. `pending` means they haven't
+                responded yet.
+            </p>
+            <div class="connection-list" id="brandRequestList"></div>
+            <div class="empty-note" data-reveal style="display: none;" id="brandRequestEmpty">
+                <h3>Nothing sent yet</h3>
+                <p>Find an opportunity on the Discover page and mark "I'm Interested"
+                   to send a connection request.</p>
+            </div>
+        </section>
+
+        <p id="connectionsMessage" class="form-message" role="status" aria-live="polite" style="display: none;"></p>
+
+    </main>
+</div>
+
+<script src="../js/script.js"></script>
+
+<!-- POCKETBASE SDK + SHARED CONFIG + AUTH GUARD -->
+<script src="https://cdn.jsdelivr.net/npm/pocketbase@0.28.1/dist/pocketbase.umd.js"></script>
+<script src="../js/pocketbase.js"></script>
+<script src="../js/auth-guard.js"></script>
+
+<!-- CONNECTIONS LOGIC -->
+<script>
+
+    function getErrorMessage(err) {
+        const data = err && err.response && err.response.data;
+        if (data) {
+            for (const field of Object.keys(data)) {
+                const fieldError = data[field];
+                if (fieldError && fieldError.message) {
+                    return fieldError.message;
+                }
+            }
+        }
+        return (err && err.message) || "Something went wrong. Please try again.";
+    }
+
+    function showMessage(text, isError) {
+        const m = document.getElementById("connectionsMessage");
+        m.textContent = text;
+        m.classList.remove("error", "success");
+        m.classList.add(isError ? "error" : "success");
+        m.style.display = "block";
+    }
+
+    function hideMessage() {
+        document.getElementById("connectionsMessage").style.display = "none";
+    }
+
+    function formatDate(value) {
+        if (!value) return "Date TBA";
+        const d = new Date(value);
+        if (isNaN(d.getTime())) return "Date TBA";
+        return d.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
+    }
+
+    function statusLabel(status) {
+        switch (status) {
+            case "accepted": return "Accepted";
+            case "rejected": return "Declined";
+            case "archived": return "Archived";
+            default: return "Pending";
+        }
+    }
+
+    function renderPlannerView(rows) {
+        const list = document.getElementById("connectionList");
+        const empty = document.getElementById("connectionEmpty");
+        const count = document.getElementById("connectionCount");
+
+        list.innerHTML = "";
+
+        if (!rows.length) {
+            empty.style.display = "block";
+            count.textContent = "0 connections";
+            return;
+        }
+        empty.style.display = "none";
+        count.textContent = rows.length + (rows.length === 1 ? " connection" : " connections");
+
+        rows.forEach(function (conn) {
+            const brand = conn.from_user || {};
+            const opp = conn.opportunity || {};
+            const brandName = brand.name ? brand.name.trim() : "A brand";
+            const brandEmail = brand.email ? brand.email : "";
+
+            const row = document.createElement("article");
+            row.className = "profile-card";
+            row.setAttribute("data-reveal", "");
+
+            const head = document.createElement("div");
+            head.className = "profile-card-head";
+            const h3 = document.createElement("h3");
+            h3.textContent = brandName;
+            head.appendChild(h3) ;
+
+            const status = document.createElement("span");
+            status.className = "status " + (
+                conn.status === "accepted" ? "status--accepted" :
+                conn.status === "rejected" ? "status--rejected" : "status--pending"
+            );
+            status.textContent = statusLabel(conn.status);
+            head.appendChild(statusapse);
+
+            row.appendChild(head);
+
+            const meta = document.createElement("p");
+            meta.className = "muted";
+            meta.textContent = (opp.title || "Opportunity") + " · " +
+                (brandEmail || "Brand account");
+            row.appendChild(meta);
+
+            if (conn.status === "pending") {
+                const actions = document.createElement("div");
+                actions.className = "btn-row";
+
+                const accept = document.createElement("button");
+                accept.className = "btn btn-primary";
+                accept.type = "button";
+                accept.textContent = "Accept";
+                accept.addEventListener("click", function () { updateStatus(conn.id, "accepted"); });
+
+                const decline = document.createElement("button");
+                decline.className = "btn btn-ghost";
+                decline.type = "button";
+                decline.textContent = "Decline";
+                decline.addEventListener("click", function () { updateStatus(conn.id, "rejected"); });
+
+                actions.appendChild(accept);
+                actions.appendChild(decline);
+                row.appendChild(actions);
+            }
+
+            list.appendChild(row);
+        });
+    }
+
+    function renderBrandView(rows) {
+        const list = document.getElementById("brandRequestList");
+        const empty = document.getElementById("brandRequestEmpty");
+        const count = document.getElementById("brandRequestCount");
+
+        list.innerHTML = "";
+
+        if (!rows.length) {
+            empty.style.display = "block";
+            count.textContent = "0 requests";
+            return;
+        }
+        empty.style.display = "none";
+        count.textContent = rows.length + (rows.length === 1 ? " request" : " requests");
+
+        rows.forEach(function (conn) {
+            const opp = conn.opportunity || {};
+            const planner = conn.to_user || {};
+
+            const row = document.createElement("article");
+            row.className = "profile-card";
+            row.setAttribute("data-reveal", "");
+
+            const head = document.createElement("div");
+            head.className = "profile-card-head";
+            const h3 = document.createElement("h3");
+            h3.textContent = opp.title || "Opportunity";
+            head.appendChild(h3);
+
+            const status = document.createElement("span");
+            status.className = "status " + (
+                conn.status === "accepted" ? "status--accepted" :
+                conn.status === "rejected" ? "status--rejected" : "status--pending"
+            );
+            status.textContent = statusLabel(conn.status);
+            head.appendChild(statusapse);
+
+            row.appendChild(head);
+
+            const meta = document.createElement("p");
+            meta.className = "muted";
+            meta.textContent = "Requested from " +
+                ((planner && planner.name) || "the planner") + " · " + formatDate(conn.created);
+            row.appendChild(meta);
+
+            list.appendChild(row);
+        });
+    }
+
+    async function updateStatus(id, status) {
+        hideMessage();
+        try {
+            await window.pb.collection("connections").update(id, { status: status });
+            showMessage(status === "accepted" ? "Connection accepted." : "Connection declined.", false);
+            await renderView();
+        } catch (err) {
+            showMessage("Could not update: " + getErrorMessage(err), true);
+        }
+    }
+
+    async function renderView() {
+        const auth = await requireSession();
+        if (auth === null) return;
+
+        const profile = auth.profile;
+        const fullName = profile.name ? profile.name.trim() : "";
+        const displayName = fullName || (profile.email ? profile.email.split("@")[0] : "");
+
+        document.getElementById("sidebarAvatar").textContent = getInitials(fullName || "LinkUp User");
+        document.getElementById("sidebarName").textContent = displayName || "LinkUp User";
+        document.getElementById("sidebarRoleLabel").textContent =
+            profile.role === "event_planner" ? "Event Planner Account" : "Brand Account";
+
+        const isPlanner = profile.role === "event_planner";
+        document.getElementById("plannerView").style.display = isPlanner ? "" : "none";
+        document.getElementById("brandView").style.display = isPlanner ? "none" : "";
+
+        try {
+            const rows = await window.pb.collection("connections").getFullList({
+                sort: "-created",
+                expand: "from_user,to_user,opportunity"
+            });
+
+            const mine = rows.filter(function (conn) {
+                const fromId = conn.from_user && conn.from_user.id ? conn.from_user.id : conn.from_user;
+                const toId = conn.to_user && conn.to_user.id ? conn.to_user.id : conn.to_user;
+                return isPlanner
+                    ? (String(toId) === String(profile.id))
+                    : (String(fromId) === String(profile.id));
+            });
+
+            if (isPlanner) {
+                renderPlannerView(mine);
+            } else {
+                renderBrandView(mine);
+            }
+        } catch (err) {
+            const target = isPlanner ? "connectionCount" : "brandRequestCount";
+            document.getElementById(target).textContent = "Could not load connections";
+            console.error("Connections failed to load:", err);
+        }
+    }
+
+    document.getElementById("signOutLink").addEventListener("click", function (event) {
+        event.preventDefault();
+        signOut();
+    });
+
+    renderView().catch(function (error) {
+        console.error("Connections failed:", error);
+    });
+
+</script>
+</body>
+</html>

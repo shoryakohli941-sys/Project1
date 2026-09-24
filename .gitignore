@@ -1,0 +1,86 @@
+# ==========================================
+# LINKUP — GITIGNORE
+# ==========================================
+#
+# Files listed here are never committed or
+# pushed to GitHub.
+#
+# Note: supabase.js is NOT ignored on purpose.
+# It only holds the PUBLISHABLE key, which is
+# meant to be visible in frontend code. The
+# service_role key, secret key and database
+# password must never be written to any file
+# in this project.
+
+
+# ------------------------------------------
+# Secrets / environment files
+# ------------------------------------------
+.env
+.env.*
+*.key
+*.pem
+secrets.json
+
+
+# ------------------------------------------
+# Operating system junk
+# ------------------------------------------
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+
+
+# ------------------------------------------
+# Editor / IDE
+# ------------------------------------------
+# .vscode/launch.json is tracked on purpose
+# (it is the shared "Launch Chrome" config),
+# so only personal VS Code settings are ignored.
+.vscode/settings.json
+.vscode/tasks.json
+.idea/
+*.swp
+
+
+# ------------------------------------------
+# Node (only if tooling is added later)
+# ------------------------------------------
+node_modules/
+package-lock.json
+npm-debug.log*
+yarn-error.log*
+
+
+# ------------------------------------------
+# Python (only if a Flask backend is added later)
+# ------------------------------------------
+__pycache__/
+*.py[cod]
+venv/
+.venv/
+
+
+# ------------------------------------------
+# Build / temp output
+# ------------------------------------------
+dist/
+build/
+*.log
+*.tmp
+*.bak
+
+
+# ------------------------------------------
+# Internal working notes (AI session logs /
+# scratch) — kept OUT of the public repo.
+# ------------------------------------------
+txt/
+*.txt
+md/CHAT_HISTORY.md
+md/CHAT_HISTORY.txt
+
+# NOTE: README.md + ROADMAP.md + IMPLEMENTATION_PLAN.md
+# (the real product docs) stay TRACKED so they ship.

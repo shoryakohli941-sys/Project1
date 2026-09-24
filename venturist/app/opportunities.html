@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="theme-color" content="#FFEFB3">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Opportunities | LinkUp</title>
+    <script>document.documentElement.classList.add("js");</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Leckerli+One&display=swap">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<div class="app dashboard">
+
+    <aside class="sidebar">
+        <a href="dashboard.html" class="logo dashboard-logo">Link<em>Up</em></a>
+
+        <div class="sidebar-nav">
+            <div class="nav-title">Platform</div>
+            <nav class="dashboard-nav" aria-label="Platform">
+                <a href="dashboard.html"><span class="nav-icon">01</span><span>Dashboard</span></a>
+                <a href="discover.html"><span class="nav-icon">02</span><span>Discover Events</span></a>
+                <a href="opportunities.html" class="active" aria-current="page"><span class="nav-icon">03</span><span>Opportunities</span></a>
+                <a href="connections.html"><span class="nav-icon">04</span><span>Connections</span></a>
+                <a href="messages.html"><span class="nav-icon">05</span><span>Messages</span></a>
+                <a href="partnerships.html"><span class="nav-icon">06</span><span>Partnerships</span></a>
+            </nav>
+            <div class="nav-title">Account</div>
+            <nav class="dashboard-nav" aria-label="Account">
+                <a href="profile.html"><span class="nav-icon">07</span><span>Profile</span></a>
+                <a href="#" id="signOutLink"><span class="nav-icon">08</span><span>Sign out</span></a>
+            </nav>
+        </div>
+
+        <div class="sidebar-bottom">
+            <a href="profile.html" class="sidebar-profile">
+                <div class="profile-avatar" id="sidebarAvatar">…</div>
+                <div class="sidebar-profile-text">
+                    <strong id="sidebarName">Loading…</strong>
+                    <span id="sidebarRoleLabel">…</span>
+                </div>
+            </a>
+        </div>
+    </aside>
+
+    <main class="dashboard-main">
+
+        <header class="topbar">
+            <div class="page-title">
+                <h1>Opportunities</h1>
+                <p>Partnership opportunities across events.</p>
+            </div>
+            <div class="topbar-actions">
+                <label class="search-box">
+                    <span class="visually-hidden">Search opportunities</span>
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="7" cy="7" r="5.25" stroke="currentColor" stroke-width="1.5"/><path d="M11 11l3.5 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                    <input type="text" id="searchInput" placeholder="Search opportunities…">
+                </label>
+                <button class="icon-btn notification" type="button" aria-label="Notifications">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6.5a4 4 0 118 0v3l1.25 2H2.75L4 9.5v-3z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M6.5 13.5a1.5 1.5 0 003 0" stroke="currentColor" stroke-width="1.4"/></svg>
+                </button>
+            </div>
+        </header>
+
+        <section class="welcome welcome-card">
+            <p class="eyebrow eyebrow--rule" data-today data-reveal>Today</p>
+            <h2 id="opportunitiesTitle" data-reveal>Opportunities</h2>
+            <p id="opportunitiesDescription" data-reveal>Partnership openings published by event planners.</p>
+        </section>
+
+        <section class="dash-section" id="opportunitiesSection">
+            <div class="section-header">
+                <h2 id="opportunitiesListTitle">Open opportunities</h2>
+                <div class="section-header-meta">
+                    <span class="stamp" id="opportunityCount">Loading…</span>
+                </div>
+            </div>
+            <div class="opportunity-grid" id="opportunityGrid"></div>
+        </section>
+
+        <section class="welcome welcome-card" id="emptyState" style="display: none;">
+            <p class="eyebrow" data-reveal>No open opportunities</p>
+            <h2 data-reveal>Nothing open right now</h2>
+            <p data-reveal>New opportunities will appear here as planners publish them.</p>
+        </section>
+
+    </main>
+</div>
+
+<script src="../js/script.js"></script>
+
+<!-- POCKETBASE SDK + SHARED CONFIG + AUTH GUARD (load in this order) -->
+<script src="https://cdn.jsdelivr.net/npm/pocketbase@0.28.1/dist/pocketbase.umd.js"></script>
+<script src="../js/pocketbase.js"></script>
+<script src="../js/auth-guard.js"></script>
+
+<!-- OPPORTUNITIES LOGIC -->
+
+<script>
+
+    var allOpportunities = [];
+
+    function renderOpportunities(list) {
+        var grid = document.getElementById("opportunityGrid");
+        var empty = document.getElementById("emptyState");
+        var count = document.getElementById("opportunityCount");
+
+        grid.innerHTML = "";
+
+        if (!list.length) {
+            document.getElementById("opportunitiesSection").style.display = "none";
+            empty.style.display = "block";
+            return;
+        }
+
+        empty.style.display = "none";
+        count.textContent = list.length + (list.length === 1 ? " opportunity" : " opportunities");
+
+        list.forEach(function (item) {
+            var eventName =
+                item.event_id && item.event_id.name
+                    ? item.event_id.name
+                    : "Event TBA";
+            var organizer =
+                item.organizer_id && item.organizer_id.name
+                    ? item.organizer_id.name
+                    : "";
+
+            var card = document.createElement("article");
+            card.className = "opportunity-card";
+
+            var pill = document.createElement("span");
+            pill.className = "opportunity-type";
+            pill.textContent = item.type || "Partnership";
+
+            var h3 = document.createElement("h3");
+            h3.textContent = item.title || "Untitled opportunity";
+
+            var desc = document.createElement("p");
+            desc.textContent = item.description || "No description provided yet.";
+
+            var details = document.createElement("div");
+            details.className = "opportunity-details";
+
+            var spanEvent = document.createElement("span");
+            spanEvent.textContent = eventName;
+
+            var spanBudget = document.createElement("span");
+            spanBudget.textContent = item.budget || "Budget on request";
+
+            var spanAudience = document.createElement("span");
+            spanAudience.textContent = item.audience || "Audience TBA";
+
+            details.appendChild(spanEvent);
+            details.appendChild(spanBudget);
+            details.appendChild(spanAudience);
+
+            card.appendChild(pill);
+            card.appendChild(h3);
+            card.appendChild(desc);
+            card.appendChild(details);
+
+            if (organizer) {
+                var match = document.createElement("div");
+                match.className = "match";
+                var label = document.createElement("span");
+                label.textContent = item.status === "open" ? "Open · " + organizer : "Closed · " + organizer;
+                var value = document.createElement("span");
+                value.textContent = item.status === "open" ? "Apply" : "Closed";
+                match.appendChild(label);
+                match.appendChild(value);
+                card.appendChild(match);
+            }
+
+            grid.appendChild(card);
+        });
+    }
+
+    function applyFilter() {
+        var query = document.getElementById("searchInput").value.trim().toLowerCase();
+
+        if (!query) {
+            renderOpportunities(allOpportunities);
+            return;
+        }
+
+        renderOpportunities(allOpportunities.filter(function (item) {
+            var haystack = [
+                item.title,
+                item.type,
+                item.budget,
+                item.audience,
+                item.description,
+                item.event_id && item.event_id.name,
+                item.organizer_id && item.organizer_id.name
+            ].join(" ").toLowerCase();
+            return haystack.indexOf(query) !== -1;
+        }));
+    }
+
+    async function renderOpportunitiesPage() {
+        const auth = await requireSession();
+        if (auth === null) return;
+
+        const profile = auth.profile;
+        const isEventPlanner = profile.role === "event_planner";
+        const fullName = profile.name ? profile.name.trim() : "";
+        const displayName = fullName || (profile.email ? profile.email.split("@")[0] : "");
+
+        document.getElementById("sidebarAvatar").textContent =
+            getInitials(fullName || "LinkUp User");
+        document.getElementById("sidebarName").textContent =
+            displayName || "LinkUp User";
+        document.getElementById("sidebarRoleLabel").textContent =
+            isEventPlanner ? "Event Planner Account" : "Brand Account";
+
+        if (isEventPlanner) {
+            document.getElementById("opportunitiesTitle").textContent =
+                "My opportunities";
+            document.getElementById("opportunitiesDescription").textContent =
+                "Partnership openings you've published for your events.";
+            document.getElementById("opportunitiesListTitle").textContent =
+                "Your opportunities";
+        }
+
+        var options = {
+            sort: "-created",
+            expand: "event_id,organizer_id"
+        };
+
+        if (isEventPlanner) {
+            options.filter = window.pb.filter("organizer_id = {:id}", {
+                id: profile.id
+            });
+        }
+
+        try {
+            allOpportunities = await window.pb
+                .collection("opportunities")
+                .getFullList(options);
+        } catch (err) {
+            console.error("Could not load opportunities:", err);
+            document.getElementById("opportunityCount").textContent =
+                "Could not load opportunities";
+            return;
+        }
+
+        renderOpportunities(allOpportunities);
+    }
+
+    document.getElementById("searchInput")
+        .addEventListener("input", applyFilter);
+
+    document.getElementById("signOutLink")
+        .addEventListener("click", function (event) {
+            event.preventDefault();
+            signOut();
+        });
+
+    renderOpportunitiesPage().catch(function (error) {
+        console.error("Opportunities failed to load:", error);
+    });
+
+</script>
+</body>
+</html>

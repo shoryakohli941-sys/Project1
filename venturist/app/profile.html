@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="theme-color" content="#FFEFB3">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile | LinkUp</title>
+    <script>document.documentElement.classList.add("js");</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Leckerli+One&display=swap">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<header class="app-topbar">
+    <div class="container">
+        <a href="dashboard.html" class="logo">Link<em>Up</em></a>
+        <nav aria-label="App">
+<a href="dashboard.html">Dashboard</a>
+            <a href="profile.html" class="active" aria-current="page">Profile</a>
+            <a href="#" id="signOutLink">Sign out</a>
+        </nav>
+    </div>
+</header>
+
+<main class="profile-page container">
+
+    <a href="dashboard.html" class="back-link"><span aria-hidden="true">←</span> Back to dashboard</a>
+
+    <section class="masthead profile-header" data-reveal>
+        <div class="avatar" id="profileAvatar">…</div>
+        <div class="masthead-text">
+            <h1 id="profileName">Loading…</h1>
+            <p id="profileRoleLabel">…</p>
+        </div>
+        <button class="btn btn-primary edit-btn" id="editProfileBtn" type="button">Edit profile</button>
+    </section>
+
+    <section class="profile-grid" id="profileGrid">
+
+        <div class="profile-card tilt" data-tilt="3" data-reveal>
+            <div class="profile-card-head"><h2>Basic information</h2></div>
+                <div class="info-row">
+                    <span class="info-label">Name</span>
+                    <span class="info-value" id="profileDisplayFullName">…</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Organization</span>
+                    <span class="info-value" id="profileDisplayOrg">…</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Email</span>
+                    <span class="info-value" id="profileDisplayEmail">…</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Location</span>
+                    <span class="info-value" id="profileDisplayLocation">…</span>
+                </div>
+        </div>
+
+        <div class="profile-card tilt" data-tilt="3" data-reveal>
+            <div class="profile-card-head"><h2 id="profileAboutTitle">About the Brand</h2></div>
+                <div class="info-row">
+                    <span class="info-label">Category</span>
+                    <span class="info-value" id="profileDisplayCategory">…</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Description</span>
+                    <span class="info-value" id="profileDisplayDescription">…</span>
+                </div>
+        </div>
+
+        <!-- DEMO CONTENT -->
+        <div class="profile-card profile-card--sample" data-reveal>
+            <div class="profile-card-head"><h2>Interests</h2><span class="stamp">Sample</span></div>
+            <div class="tag-container">
+                <span class="tag">College events</span>
+                <span class="tag">Festivals</span>
+                <span class="tag">Creators</span>
+                <span class="tag">Fashion</span>
+                <span class="tag">Lifestyle</span>
+                <span class="tag">Youth</span>
+            </div>
+        </div>
+
+        <!-- DEMO CONTENT -->
+        <div class="profile-card profile-card--sample" data-reveal>
+            <div class="profile-card-head"><h2>Partnership goals</h2><span class="stamp">Sample</span></div>
+                <div class="info-row">
+                    <span class="info-label">Looking for</span>
+                    <span class="info-value">Event sponsorships</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Audience</span>
+                    <span class="info-value">Students &amp; young adults</span>
+                </div>
+        </div>
+
+    </section>
+
+    <!-- EDIT PROFILE FORM (hidden until "Edit Profile" is clicked) -->
+    <section class="profile-card" id="editProfileCard" style="display: none;">
+        <div class="profile-card-head"><h2>Edit profile</h2></div>
+        <div class="form">
+                <div class="field form-group">
+                    <label for="editFullName">Full name</label>
+                    <input type="text" id="editFullName" placeholder="Your full name">
+                </div>
+                <div class="field form-group">
+                    <label for="editOrg">Brand / organization</label>
+                    <input type="text" id="editOrg" placeholder="Brand or organization name">
+                </div>
+                <div class="field form-group">
+                    <label for="editLocation">Location</label>
+                    <input type="text" id="editLocation" placeholder="City">
+                </div>
+                <div class="field form-group">
+                    <label for="editCategory">Category</label>
+                    <input type="text" id="editCategory" placeholder="e.g. Fashion, College Event">
+                </div>
+            <div class="field form-group">
+                <label for="editDescription">Description</label>
+                <textarea id="editDescription" rows="3" placeholder="A short description of your brand or events"></textarea>
+            </div>
+            <p id="profileMessage" class="form-message profile-message" role="status" aria-live="polite"></p>
+            <div class="edit-actions">
+                <button class="btn btn-primary edit-btn" id="saveProfileBtn" type="button">Save Changes</button>
+                <button class="btn btn-ghost cancel-btn" id="cancelEditBtn" type="button">Cancel</button>
+            </div>
+        </div>
+    </section>
+
+</main>
+
+<script src="../js/script.js"></script>
+
+<!-- POCKETBASE SDK + SHARED CONFIG + AUTH GUARD (load in this order) -->
+<script src="https://cdn.jsdelivr.net/npm/pocketbase@0.28.1/dist/pocketbase.umd.js"></script>
+<script src="../js/pocketbase.js"></script>
+<script src="../js/auth-guard.js"></script>
+
+<!-- PROFILE LOGIC -->
+
+<script>
+
+    let currentUser = null;
+
+    function showProfileMessage(text, isError) {
+
+        const message = document.getElementById("profileMessage");
+
+        message.textContent = text;
+        message.classList.remove("error", "success");
+        message.classList.add(isError ? "error" : "success");
+        message.style.display = "block";
+
+    }
+
+    // Turn a PocketBase error into a readable message.
+
+    function getErrorMessage(err) {
+
+        const data = err &&
+            err.response &&
+            err.response.data;
+
+        if (data) {
+            for (const field of Object.keys(data)) {
+                const fieldError = data[field];
+                if (fieldError && fieldError.message) {
+                    return fieldError.message;
+                }
+            }
+        }
+
+        return (err && err.message) || "Something went wrong. Please try again.";
+
+    }
+
+    function getRoleLabel(role) {
+
+        return role === "event_planner"
+            ? "Event Planner Account"
+            : "Brand Account";
+
+    }
+
+    function fillProfile(profile) {
+
+        const fullName = profile.name || "LinkUp User";
+
+        document.getElementById("profileAvatar").textContent =
+            getInitials(fullName);
+
+        document.getElementById("profileName").textContent =
+            fullName;
+
+        document.getElementById("profileRoleLabel").textContent =
+            getRoleLabel(profile.role) + " · LinkUp";
+
+        document.getElementById("profileDisplayFullName").textContent =
+            profile.name || "—";
+
+        document.getElementById("profileDisplayOrg").textContent =
+            profile.organization_name || "—";
+
+        document.getElementById("profileDisplayEmail").textContent =
+            profile.email || (currentUser ? currentUser.email : "") || "—";
+
+        document.getElementById("profileDisplayLocation").textContent =
+            profile.location || "—";
+
+        document.getElementById("profileDisplayCategory").textContent =
+            profile.category || "—";
+
+        document.getElementById("profileDisplayDescription").textContent =
+            profile.description || "Add a short description about your brand or events.";
+
+        document.getElementById("profileAboutTitle").textContent =
+            profile.role === "event_planner"
+                ? "About the Event Planner"
+                : "About the Brand";
+
+    }
+
+    function openEditForm(profile) {
+
+        document.getElementById("editFullName").value =
+            profile.name || "";
+
+        document.getElementById("editOrg").value =
+            profile.organization_name || "";
+
+        document.getElementById("editLocation").value =
+            profile.location || "";
+
+        document.getElementById("editCategory").value =
+            profile.category || "";
+
+        document.getElementById("editDescription").value =
+            profile.description || "";
+
+        document.getElementById("profileGrid").style.display = "none";
+        document.getElementById("editProfileCard").style.display = "block";
+        document.getElementById("editProfileBtn").style.display = "none";
+
+    }
+
+    function closeEditForm() {
+
+        document.getElementById("profileGrid").style.display = "grid";
+        document.getElementById("editProfileCard").style.display = "none";
+        document.getElementById("editProfileBtn").style.display = "block";
+
+    }
+
+    async function loadProfile() {
+
+        const auth = await requireSession();
+
+        if (auth === null) return; // redirected to login
+
+        currentUser = auth.user;
+
+        if (!auth.profile) {
+            showProfileMessage(
+                "Your profile could not be loaded. Please try signing in again.",
+                true
+            );
+            return;
+        }
+
+        fillProfile(auth.profile);
+
+    }
+
+    // Edit Profile button → open the form
+    document.getElementById("editProfileBtn")
+        .addEventListener("click", async function () {
+
+            const auth = await requireSession();
+            if (auth && auth.profile) openEditForm(auth.profile);
+
+        });
+
+    // Cancel → close the form
+    document.getElementById("cancelEditBtn")
+        .addEventListener("click", closeEditForm);
+
+    // Save → update PocketBase, then re-render from fresh data
+    document.getElementById("saveProfileBtn")
+        .addEventListener("click", async function () {
+
+            const fullName =
+                document.getElementById("editFullName").value.trim();
+
+            if (!fullName) {
+                showProfileMessage("Please enter your full name.", true);
+                return;
+            }
+
+            const saveButton = document.getElementById("saveProfileBtn");
+            saveButton.disabled = true;
+            saveButton.textContent = "Saving...";
+
+            try {
+
+                await window.pb
+                    .collection("users")
+                    .update(currentUser.id, {
+                        name: fullName,
+                        organization_name: document.getElementById("editOrg").value.trim(),
+                        location: document.getElementById("editLocation").value.trim(),
+                        category: document.getElementById("editCategory").value.trim(),
+                        description: document.getElementById("editDescription").value.trim()
+                    });
+
+            } catch (err) {
+
+                showProfileMessage("Could not save: " + getErrorMessage(err), true);
+                saveButton.disabled = false;
+                saveButton.textContent = "Save Changes";
+                return;
+
+            }
+
+            // Reload the profile so the display shows fresh data
+
+            let updated = null;
+            try {
+                updated = await window.pb.collection("users").getOne(currentUser.id);
+            } catch (err) {
+                console.error("Could not reload profile:", err);
+            }
+            if (updated) fillProfile(updated);
+
+            showProfileMessage("Profile updated!", false);
+
+            saveButton.disabled = false;
+            saveButton.textContent = "Save Changes";
+            closeEditForm();
+
+        });
+
+    document.getElementById("signOutLink")
+        .addEventListener("click", function (event) {
+            event.preventDefault();
+            signOut();
+        });
+
+    loadProfile();
+
+</script>
+</body>
+</html>

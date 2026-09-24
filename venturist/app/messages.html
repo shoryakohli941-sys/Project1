@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="theme-color" content="#FFEFB3">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messages | LinkUp</title>
+    <script>document.documentElement.classList.add("js");</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Leckerli+One&display=swap">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<div class="app dashboard">
+
+    <aside class="sidebar">
+        <a href="dashboard.html" class="logo dashboard-logo">Link<em>Up</em></a>
+
+        <div class="sidebar-nav">
+            <div class="nav-title">Platform</div>
+            <nav class="dashboard-nav" aria-label="Platform">
+                <a href="dashboard.html"><span class="nav-icon">01</span><span>Dashboard</span></a>
+                <a href="discover.html"><span class="nav-icon">02</span><span>Discover Events</span></a>
+                <a href="opportunities.html"><span class="nav-icon">03</span><span>Opportunities</span></a>
+                <a href="connections.html"><span class="nav-icon">04</span><span>Connections</span></a>
+                <a href="messages.html" class="active" aria-current="page"><span class="nav-icon">05</span><span>Messages</span></a>
+                <a href="partnerships.html"><span class="nav-icon">06</span><span>Partnerships</span></a>
+            </nav>
+            <div class="nav-title">Account</div>
+            <nav class="dashboard-nav" aria-label="Account">
+                <a href="profile.html"><span class="nav-icon">07</span><span>Profile</span></a>
+                <a href="#" id="signOutLink"><span class="nav-icon">08</span><span>Sign out</span></a>
+            </nav>
+        </div>
+
+        <div class="sidebar-bottom">
+            <a href="profile.html" class="sidebar-profile">
+                <div class="profile-avatar" id="sidebarAvatar">…</div>
+                <div class="sidebar-profile-text">
+                    <strong id="sidebarName">Loading…</strong>
+                    <span id="sidebarRoleLabel">…</span>
+                </div>
+            </a>
+        </div>
+    </aside>
+
+    <main class="dashboard-main">
+
+        <header class="topbar">
+            <div class="page-title">
+                <h1>Messages</h1>
+                <p>Your inbox, in one place.</p>
+            </div>
+        </header>
+
+        <section class="welcome welcome-card">
+            <p class="eyebrow eyebrow--rule" data-today data-reveal>Today</p>
+            <h2 data-reveal>Messages</h2>
+            <p data-reveal>Talk to brands and planners directly about partnerships.</p>
+        </section>
+
+        <section class="dashboard-panel" data-reveal>
+            <div class="section-header"><h2>Coming soon</h2></div>
+            <p>Messaging is planned for a later phase. When it ships, you'll be able to chat with your connections right here.</p>
+        </section>
+
+    </main>
+</div>
+
+<script src="../js/script.js"></script>
+
+<!-- POCKETBASE SDK + SHARED CONFIG + AUTH GUARD (load in this order) -->
+<script src="https://cdn.jsdelivr.net/npm/pocketbase@0.28.1/dist/pocketbase.umd.js"></script>
+<script src="../js/pocketbase.js"></script>
+<script src="../js/auth-guard.js"></script>
+
+<!-- MESSAGES LOGIC -->
+
+<script>
+
+    async function renderMessages() {
+        const auth = await requireSession();
+        if (auth === null) return;
+
+        const profile = auth.profile;
+        const fullName = profile.name ? profile.name.trim() : "";
+        const displayName = fullName || (profile.email ? profile.email.split("@")[0] : "");
+
+        document.getElementById("sidebarAvatar").textContent =
+            getInitials(fullName || "LinkUp User");
+        document.getElementById("sidebarName").textContent =
+            displayName || "LinkUp User";
+        document.getElementById("sidebarRoleLabel").textContent =
+            profile.role === "event_planner"
+                ? "Event Planner Account"
+                : "Brand Account";
+    }
+
+    document.getElementById("signOutLink")
+        .addEventListener("click", function (event) {
+            event.preventDefault();
+            signOut();
+        });
+
+    renderMessages().catch(function (error) {
+        console.error("Messages failed to load:", error);
+    });
+
+</script>
+</body>
+</html>

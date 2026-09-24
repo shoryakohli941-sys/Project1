@@ -1,591 +1,206 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="theme-color" content="#FFEFB3">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>LinkUp — Where Brands Meet Opportunities</title>
-    
+    <script>document.documentElement.classList.add("js");</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Leckerli+One&display=swap">
+    <link rel="stylesheet" href="css/style.css">
 </head>
-
-
 <body>
 
+<header class="site-header">
+    <nav class="navbar container" aria-label="Main">
+        <a href="index.html" class="logo">Link<em>Up</em></a>
+        <ul class="nav-links">
+            <li><a href="#opportunities">Opportunities</a></li>
+            <li><a href="#how-it-works">How it works</a></li>
+            <li><a href="#about">About</a></li>
+        </ul>
+        <div class="nav-buttons">
+            <a href="auth/login.html" class="btn btn-quiet btn-sm login-btn">Log in</a>
+            <a href="auth/signup.html" class="btn btn-primary btn-sm signup-btn">Get started</a>
+        </div>
+    </nav>
+</header>
 
-    <!-- =========================================
-         NAVIGATION
-    ========================================== -->
+<main>
 
-    <header>
+    <section class="hero" id="home">
+        <div class="container hero-grid">
+            <div class="hero-copy">
+                <p class="eyebrow eyebrow--rule" data-reveal>The brand × event network</p>
+                <h1 class="display" data-reveal>Where brands meet <em>opportunities.</em></h1>
+                <p class="lede" data-reveal>A marketplace connecting growing brands with the events, communities and experiences looking for real partners.</p>
+                <div class="btn-row" data-reveal>
+                    <a href="auth/signup.html" class="btn btn-primary primary-btn">Explore opportunities <span class="arrow" aria-hidden="true">→</span></a>
+                    <a href="#how-it-works" class="btn btn-ghost secondary-btn">How it works</a>
+                </div>
+            </div>
 
-        <nav class="navbar">
+            <div class="hero-visual" data-reveal="fade" data-tilt="6" aria-hidden="true">
+                <div class="stack" data-parallax>
+                    <article class="stack-card">
+                        <span class="eyebrow">Brand · seeking events</span>
+                        <h3 class="h3">Emerging lifestyle brand</h3>
+                        <div class="stack-meta"><span>Community events</span><span>Pan-India</span></div>
+                    </article>
+                    <article class="stack-card">
+                        <span class="eyebrow">Event · New Delhi</span>
+                        <h3 class="h3">Creator &amp; Startup Meetup</h3>
+                        <div class="stack-meta"><span>500+ attendees</span><span>Tech, lifestyle</span></div>
+                    </article>
+                    <article class="stack-card">
+                        <span class="eyebrow">Sponsorship · Lucknow</span>
+                        <h3 class="h3">College Cultural Festival</h3>
+                        <div class="stack-meta"><span>2,000+ expected</span><span>Food, fashion</span></div>
+                    </article>
+                </div>
+                <span class="stamp stack-caption">Sample listings</span>
+            </div>
+        </div>
+    </section>
 
-            <a href="#" class="logo">
-                Link<span>Up</span>
-            </a>
+    <section class="statement">
+        <div class="container">
+            <p data-reveal>One network connecting the people who <em>create</em> opportunities with the people who <em>need</em> them.</p>
+        </div>
+    </section>
 
-            <ul class="nav-links">
+    <section class="section" id="about">
+        <div class="container split">
+            <header class="section-head" data-reveal>
+                <p class="eyebrow">Why LinkUp</p>
+                <h2 class="h2">Two sides of the same opportunity.</h2>
+                <p>Events need brands to offset sponsorship costs and build better experiences. Growing brands need places where their products are seen, tried and remembered.</p>
+            </header>
 
-                <li>
-                    <a href="#home">Home</a>
+            <div class="sides">
+                <article class="side tilt" data-tilt="5" data-reveal>
+                    <span class="side-mark" aria-hidden="true">a.</span>
+                    <p class="eyebrow">For events</p>
+                    <h3 class="h3">Find brands that fit your audience.</h3>
+                    <p>Meet brands ready to sponsor, supply product, build on-site experiences or collaborate with your community.</p>
+                    <a href="auth/signup.html" class="text-link card-link">Find brand partners <span aria-hidden="true">→</span></a>
+                </article>
+                <article class="side tilt" data-tilt="5" data-reveal>
+                    <span class="side-mark" aria-hidden="true">b.</span>
+                    <p class="eyebrow">For brands</p>
+                    <h3 class="h3">Get in front of the right room.</h3>
+                    <p>Discover events and communities where your product reaches the right people, without leaning only on paid ads.</p>
+                    <a href="auth/signup.html" class="text-link card-link">Discover events <span aria-hidden="true">→</span></a>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section class="section section--inverse" id="how-it-works">
+        <div class="container">
+            <div class="section-head section-head--row">
+                <div data-reveal>
+                    <p class="eyebrow">How it works</p>
+                    <h2 class="h2">From discovery to collaboration.</h2>
+                </div>
+                <p data-reveal>Four steps, no agencies in between.</p>
+            </div>
+            <ol class="steps">
+                <li class="step" data-reveal="rise3d">
+                    <span class="step-num" aria-hidden="true">01</span>
+                    <h3 class="h3">Create your profile</h3>
+                    <p>Tell us who you are, what you offer and the partnerships you want.</p>
                 </li>
-
-                <li>
-                    <a href="#opportunities">Opportunities</a>
+                <li class="step" data-reveal="rise3d">
+                    <span class="step-num" aria-hidden="true">02</span>
+                    <h3 class="h3">Discover</h3>
+                    <p>Browse events, brands and opportunities that match your needs.</p>
                 </li>
-
-                <li>
-                    <a href="#how-it-works">How It Works</a>
+                <li class="step" data-reveal="rise3d">
+                    <span class="step-num" aria-hidden="true">03</span>
+                    <h3 class="h3">Connect</h3>
+                    <p>Start the conversation about sponsorship, product or collaboration.</p>
                 </li>
-
-                <li>
-                    <a href="#about">About</a>
+                <li class="step" data-reveal="rise3d">
+                    <span class="step-num" aria-hidden="true">04</span>
+                    <h3 class="h3">Collaborate</h3>
+                    <p>Turn the connection into a real-world partnership.</p>
                 </li>
+            </ol>
+        </div>
+    </section>
 
+    <section class="section" id="opportunities">
+        <div class="container">
+            <div class="section-head section-head--row">
+                <div data-reveal>
+                    <p class="eyebrow">Opportunities</p>
+                    <h2 class="h2">What's on the board.</h2>
+                </div>
+                <span class="stamp" data-reveal>Sample listings — illustrative</span>
+            </div>
+            <ul class="listings">
+                <li class="listing" data-reveal>
+                    <span class="listing-type">Event partnership</span>
+                    <h3 class="h3">Creator &amp; Startup Meetup</h3>
+                    <span class="listing-meta">500+ attendees · New Delhi</span>
+                    <a href="auth/signup.html" class="text-link view-link">View <span aria-hidden="true">→</span></a>
+                </li>
+                <li class="listing" data-reveal>
+                    <span class="listing-type">Brand seeking events</span>
+                    <h3 class="h3">Emerging Lifestyle Brand</h3>
+                    <span class="listing-meta">Community events &amp; product sampling</span>
+                    <a href="auth/signup.html" class="text-link view-link">View <span aria-hidden="true">→</span></a>
+                </li>
+                <li class="listing" data-reveal>
+                    <span class="listing-type">Sponsorship</span>
+                    <h3 class="h3">College Cultural Festival</h3>
+                    <span class="listing-meta">2,000+ expected · Lucknow</span>
+                    <a href="auth/signup.html" class="text-link view-link">View <span aria-hidden="true">→</span></a>
+                </li>
             </ul>
-
-            <div class="nav-buttons">
-
-                <a href="#" class="login-btn">
-                    Login
-                </a>
-
-                <a href="#join" class="signup-btn">
-                    Get Started
-                </a>
-
-            </div>
-
-        </nav>
-
-    </header>
-
-
-
-    <!-- =========================================
-         HERO
-    ========================================== -->
-
-    <main>
-
-        <section class="hero" id="home">
-
-            <div class="hero-content">
-
-                <div class="hero-label">
-                    THE BRAND × EVENT NETWORK
-                </div>
-
-                <h1>
-                    Where
-                    <span>Brands</span>
-                    Meet
-                    <span>Opportunities.</span>
-                </h1>
-
-                <p class="hero-description">
-                    LinkUp is a marketplace built to connect
-                    growing brands with events, communities
-                    and experiences looking for meaningful
-                    partnerships.
-                </p>
-
-                <div class="hero-buttons">
-
-                  <a href="signin.html" class="primary-btn">
-                       Explore Opportunities →
-                </a>
-
-                    <a href="#join" class="secondary-btn">
-                        Join the Network
-                    </a>
-
-                </div>
-
-            </div>
-
-
-            <!-- VISUAL CONNECTION -->
-
-            <div class="hero-visual">
-
-                <div class="orbit"></div>
-
-                <div class="center-circle">
-                    BRAND<br>
-                    ×<br>
-                    EVENT
-                </div>
-
-                <div class="floating-card brand-card">
-
-                    <h4>BRANDS</h4>
-
-                    <p>
-                        Looking for audiences,
-                        visibility and partnerships.
-                    </p>
-
-                </div>
-
-
-                <div class="floating-card event-card">
-
-                    <h4>EVENTS</h4>
-
-                    <p>
-                        Looking for sponsors,
-                        products and experiences.
-                    </p>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-
-        <!-- =========================================
-             INTRO
-        ========================================== -->
-
-        <div class="intro-strip">
-
-            One network connecting the people who
-            create opportunities with the people who need them.
-
         </div>
+    </section>
 
-
-
-        <!-- =========================================
-             PROBLEM / SOLUTION
-        ========================================== -->
-
-        <section class="section" id="about">
-
-            <div class="section-heading">
-
-                <div class="section-label">
-                    WHY LINKUP?
+    <section class="cta" id="join">
+        <div class="container">
+            <div class="cta-inner" data-reveal>
+                <div>
+                    <p class="eyebrow">Join LinkUp</p>
+                    <h2 class="h1">Your next partnership could start <em>here.</em></h2>
+                    <p>Whether you're organising an event or building a brand, LinkUp helps you find the right people to work with.</p>
                 </div>
-
-                <h2>
-                    Two sides of the same opportunity.
-                </h2>
-
-                <p>
-                    Events need brands to reduce sponsorship
-                    costs and create better experiences.
-                    Growing brands need places where their
-                    products can be seen, experienced and
-                    remembered.
-                </p>
-
+                <a href="auth/signup.html" class="btn btn-primary primary-btn">Create an account <span class="arrow" aria-hidden="true">→</span></a>
             </div>
-
-
-            <div class="connection-grid">
-
-
-                <div class="connection-card">
-
-                    <div class="card-icon">
-                        ◇
-                    </div>
-
-                    <h3>
-                        For Events
-                    </h3>
-
-                    <p>
-                        Find relevant brands willing to
-                        sponsor your event, provide products,
-                        create experiences or collaborate
-                        with your audience.
-                    </p>
-
-                    <a href="#" class="card-link">
-                        Find Brand Partners →
-                    </a>
-
-                </div>
-
-
-                <div class="connection-symbol">
-                    ↔
-                </div>
-
-
-                <div class="connection-card">
-
-                    <div class="card-icon">
-                        ◆
-                    </div>
-
-                    <h3>
-                        For Brands
-                    </h3>
-
-                    <p>
-                        Discover events and communities where
-                        your product can reach the right people
-                        without relying only on traditional
-                        advertising.
-                    </p>
-
-                    <a href="#" class="card-link">
-                        Discover Events →
-                    </a>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-
-        <!-- =========================================
-             HOW IT WORKS
-        ========================================== -->
-
-        <section class="how-section" id="how-it-works">
-
-            <div class="section">
-
-                <div class="section-heading">
-
-                    <div class="section-label">
-                        HOW IT WORKS
-                    </div>
-
-                    <h2>
-                        From discovery to collaboration.
-                    </h2>
-
-                    <p style="color:#222;">
-                        A simple system designed to make
-                        partnerships easier.
-                    </p>
-
-                </div>
-
-
-                <div class="steps">
-
-
-                    <div class="step">
-
-                        <div class="step-number">
-                            01
-                        </div>
-
-                        <h3>
-                            Create Your Profile
-                        </h3>
-
-                        <p>
-                            Tell us who you are, what you
-                            offer and what kind of
-                            partnerships you are looking for.
-                        </p>
-
-                    </div>
-
-
-                    <div class="step">
-
-                        <div class="step-number">
-                            02
-                        </div>
-
-                        <h3>
-                            Discover
-                        </h3>
-
-                        <p>
-                            Explore events, brands and
-                            opportunities that match your
-                            requirements.
-                        </p>
-
-                    </div>
-
-
-                    <div class="step">
-
-                        <div class="step-number">
-                            03
-                        </div>
-
-                        <h3>
-                            Connect
-                        </h3>
-
-                        <p>
-                            Start conversations and discuss
-                            sponsorships, products and
-                            collaborations.
-                        </p>
-
-                    </div>
-
-
-                    <div class="step">
-
-                        <div class="step-number">
-                            04
-                        </div>
-
-                        <h3>
-                            Collaborate
-                        </h3>
-
-                        <p>
-                            Turn the connection into a
-                            real-world partnership.
-                        </p>
-
-                    </div>
-
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-
-        <!-- =========================================
-             MARKETPLACE
-        ========================================== -->
-
-        <section class="section" id="opportunities">
-
-            <div class="section-heading">
-
-                <div class="section-label">
-                    OPPORTUNITIES
-                </div>
-
-                <h2>
-                    Discover what's happening.
-                </h2>
-
-                <p>
-                    A glimpse of what the LinkUp marketplace
-                    could look like.
-                </p>
-
-            </div>
-
-
-            <div class="marketplace-grid">
-
-
-                <div class="market-card">
-
-                    <div class="market-image">
-                        EVENT
-                    </div>
-
-                    <div class="market-content">
-
-                        <div class="market-type">
-                            EVENT PARTNERSHIP
-                        </div>
-
-                        <h3>
-                            Creator & Startup Meetup
-                        </h3>
-
-                        <p>
-                            500+ attendees · New Delhi
-                        </p>
-
-                        <a href="#" class="view-link">
-                            View Opportunity →
-                        </a>
-
-                    </div>
-
-                </div>
-
-
-
-                <div class="market-card">
-
-                    <div class="market-image">
-                        BRAND
-                    </div>
-
-                    <div class="market-content">
-
-                        <div class="market-type">
-                            BRAND LOOKING FOR EVENTS
-                        </div>
-
-                        <h3>
-                            Emerging Lifestyle Brand
-                        </h3>
-
-                        <p>
-                            Looking for community events
-                            and product experiences.
-                        </p>
-
-                        <a href="#" class="view-link">
-                            View Brand →
-                        </a>
-
-                    </div>
-
-                </div>
-
-
-
-                <div class="market-card">
-
-                    <div class="market-image">
-                        EVENT
-                    </div>
-
-                    <div class="market-content">
-
-                        <div class="market-type">
-                            SPONSORSHIP OPPORTUNITY
-                        </div>
-
-                        <h3>
-                            College Cultural Festival
-                        </h3>
-
-                        <p>
-                            2,000+ expected attendees
-                        </p>
-
-                        <a href="#" class="view-link">
-                            View Opportunity →
-                        </a>
-
-                    </div>
-
-                </div>
-
-
-            </div>
-
-        </section>
-
-
-
-        <!-- =========================================
-             CTA
-        ========================================== -->
-
-        <section class="cta-section" id="join">
-
-            <h2>
-                Your next partnership
-                could start here.
-            </h2>
-
-            <p>
-                Whether you're organizing an event or
-                building the next growing brand, LinkUp
-                helps you find the right people to
-                collaborate with.
-            </p>
-
-            <a href="#" class="primary-btn">
-                Join LinkUp →
-            </a>
-
-        </section>
-
-    </main>
-
-
-
-    <!-- =========================================
-         FOOTER
-    ========================================== -->
-
-    <footer>
-
-        <div class="footer-content">
-
-            <div class="footer-brand">
-
-                <h3>
-                    Link<span style="color:#FFD21F;">Up</span>
-                </h3>
-
-                <p>
-                    Connecting growing brands with events,
-                    communities and opportunities.
-                </p>
-
-            </div>
-
-
-            <div class="footer-column">
-
-                <h4>
-                    Platform
-                </h4>
-
-                <a href="#">
-                    Explore Events
-                </a>
-
-                <a href="#">
-                    Discover Brands
-                </a>
-
-                <a href="#">
-                    Opportunities
-                </a>
-
-            </div>
-
-
-            <div class="footer-column">
-
-                <h4>
-                    Company
-                </h4>
-
-                <a href="#">
-                    About
-                </a>
-
-                <a href="#">
-                    Contact
-                </a>
-
-                <a href="#">
-                    Privacy
-                </a>
-
-            </div>
-
         </div>
+    </section>
 
+</main>
 
-        <div class="footer-bottom">
-
-            © 2026 LinkUp. Building connections between
-            brands and opportunities.
-
+<footer class="site-footer">
+    <div class="container footer-content">
+        <div class="footer-brand">
+            <a href="index.html" class="logo">Link<em>Up</em></a>
+            <p>Connecting growing brands with events, communities and opportunities.</p>
         </div>
+        <div class="footer-column">
+            <h4>Platform</h4>
+                <a href="app/discover.html">Explore events</a>
+                <a href="app/discover.html">Discover brands</a>
+                <a href="app/discover.html">Explore opportunities</a>
+        </div>
+        <div class="footer-column">
+            <h4>Account</h4>
+            <a href="auth/signup.html">Create account</a>
+            <a href="auth/login.html">Log in</a>
+            <a href="#">Privacy</a>
+        </div>
+    </div>
+    <div class="container footer-bottom">© 2026 LinkUp</div>
+</footer>
 
-    </footer>
-
-<link rel="stylesheet" href="style.css">
+<script src="js/script.js"></script>
 </body>
-</html>    
+</html>
