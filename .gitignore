@@ -81,6 +81,7 @@ txt/
 *.txt
 md/CHAT_HISTORY.md
 md/CHAT_HISTORY.txt
+md/PRESENTATION_WALKTHROUGH.md
 
 # NOTE: README.md + ROADMAP.md + IMPLEMENTATION_PLAN.md
 # (the real product docs) stay TRACKED so they ship.
