@@ -114,7 +114,7 @@ If you deploy this site to Vercel (or any other platform), the local database (`
 
 To solve this, you need to host PocketBase on a 24/7 server.
 
-**Please see [`FLY_IO_HOSTING_GUIDE.md`](./FLY_IO_HOSTING_GUIDE.md) for a step-by-step guide on how to easily set up a free 24/7 PocketBase database using Fly.io and connect it to your app.**
+**Please see [`HUGGING_FACE_HOSTING_GUIDE.md`](./HUGGING_FACE_HOSTING_GUIDE.md) for a step-by-step guide on how to easily set up a free 24/7 PocketBase database using Hugging Face Spaces (no credit card required) and connect it to your app.**
 
 ## Security rules (always)
 
