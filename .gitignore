@@ -82,6 +82,9 @@ txt/
 md/CHAT_HISTORY.md
 md/CHAT_HISTORY.txt
 md/PRESENTATION_WALKTHROUGH.md
+md/CURRENT_STATUS.md
+md/IMPLEMENTATION_PLAN.md
+md/REDESIGN_PROMPT.md
+md/ROADMAP.md
 
-# NOTE: README.md + ROADMAP.md + IMPLEMENTATION_PLAN.md
-# (the real product docs) stay TRACKED so they ship.
+# NOTE: md/README.md stays TRACKED so it ships.
