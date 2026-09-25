@@ -93,8 +93,8 @@
 <script src="../js/script.js"></script>
 
 <!-- POCKETBASE SDK + SHARED CONFIG + AUTH GUARD (load in this order) -->
-<script src="https://cdn.jsdelivr.net/npm/pocketbase@0.28.1/dist/pocketbase.umd.js"></script>
-<script src="../js/pocketbase.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/supabase.js"></script>
 <script src="../js/auth-guard.js"></script>
 
 <!-- OPPORTUNITIES LOGIC -->
@@ -226,21 +226,29 @@
                 "Your opportunities";
         }
 
-        var options = {
-            sort: "-created",
-            expand: "event_id,organizer_id"
-        };
-
-        if (isEventPlanner) {
-            options.filter = window.pb.filter("organizer_id = {:id}", {
-                id: profile.id
-            });
-        }
-
         try {
-            allOpportunities = await window.pb
-                .collection("opportunities")
-                .getFullList(options);
+            let query = window.supabaseClient
+                .from("opportunities")
+                .select("*, event_id(*), organizer_id(*)")
+                .order("created_at", { ascending: false });
+
+            if (isEventPlanner) {
+                query = query.eq("organizer_id", profile.id);
+            }
+
+            const { data, error } = await query;
+            if (error) throw error;
+
+            // Map expand objects for compatibility with render logic
+            allOpportunities = (data || []).map(o => ({
+                ...o,
+                expand: {
+                    event_id: o.event_id,
+                    organizer_id: o.organizer_id
+                },
+                event_id: o.event_id,
+                organizer_id: o.organizer_id
+            }));
         } catch (err) {
             console.error("Could not load opportunities:", err);
             document.getElementById("opportunityCount").textContent =

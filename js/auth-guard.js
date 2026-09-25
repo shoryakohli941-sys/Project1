@@ -15,52 +15,39 @@
 //   - Turns "Alex Sharma" into "AS".
 
 async function requireSession() {
+    // 1. Check if the user is signed in via Supabase
+    const { data: { session }, error: sessionError } = await window.supabaseClient.auth.getSession();
 
-    // 1. Any saved session? PocketBase keeps the auth
-    //    state in localStorage automatically.
-
-    if (!window.pb.authStore.isValid) {
+    if (sessionError || !session) {
         window.location.href = "../auth/login.html";
         return null;
     }
 
-    // 2. Re-validate the saved token and fetch a fresh
-    //    user record (the profile fields live on it).
+    // 2. Fetch the custom profile from the users table
+    const { data: profile, error: profileError } = await window.supabaseClient
+        .from('users')
+        .select('*')
+        .eq('id', session.user.id)
+        .single();
 
-    let record;
-
-    try {
-        // authRefresh() resolves with { token, record } in
-        // pocketbase@0.28.x, so unwrap the record from it.
-        const response = await window.pb.collection("users").authRefresh();
-        record = (response && response.record) || window.pb.authStore.record;
-    } catch (err) {
-        console.error("Session refresh failed:", err);
-        window.pb.authStore.clear();
+    if (profileError || !profile) {
+        console.error("Failed to load user profile:", profileError);
+        window.supabaseClient.auth.signOut();
         window.location.href = "../auth/login.html";
         return null;
     }
 
-    // 3. Return the current user.
-
-    if (!record) {
-        window.location.href = "../auth/login.html";
-        return null;
-    }
-
+    // 3. Return the user and their profile.
     return {
-        user: record,
-        profile: record,
+        user: session.user,
+        profile: profile,
         error: null
     };
-
 }
 
 // Sign the current user out and return to the login screen.
-
-function signOut() {
-    window.pb.authStore.clear();
-    document.cookie = "pb_auth=; Max-Age=0; path=/";
+async function signOut() {
+    await window.supabaseClient.auth.signOut();
     window.location.href = "../auth/login.html";
 }
 

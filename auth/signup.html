@@ -141,15 +141,14 @@
 
 <script src="../js/script.js"></script>
 
-<!-- POCKETBASE SDK (must load before the shared config) -->
-<script src="https://cdn.jsdelivr.net/npm/pocketbase@0.28.1/dist/pocketbase.umd.js"></script>
+<!-- SUPABASE SDK (must load before the shared config) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<!-- SHARED POCKETBASE CONFIG -->
-<script src="../js/pocketbase.js"></script>
+<!-- SHARED SUPABASE CONFIG -->
+<script src="../js/supabase.js"></script>
 
     <!-- ROLE SWITCHING -->
     <script>
-
         const brandRole = document.getElementById("brandRole");
         const eventRole = document.getElementById("eventRole");
 
@@ -157,14 +156,10 @@
         const eventNameGroup = document.getElementById("eventNameGroup");
 
         const categoryLabel = document.getElementById("categoryLabel");
-
         const category = document.getElementById("category");
 
-
         // BRAND SELECTED
-
         brandRole.addEventListener("click", function() {
-
             brandRole.classList.add("active");
             eventRole.classList.remove("active");
 
@@ -183,14 +178,10 @@
                 <option>Education</option>
                 <option>Other</option>
             `;
-
         });
 
-
         // EVENT PLANNER SELECTED
-
         eventRole.addEventListener("click", function() {
-
             eventRole.classList.add("active");
             brandRole.classList.remove("active");
 
@@ -210,43 +201,33 @@
                 <option>Networking Event</option>
                 <option>Other</option>
             `;
-
         });
 
-
         // SIGNUP MESSAGE HELPER
-
         const signupMessage = document.getElementById("signupMessage");
         const submitButton = document.querySelector(".create-account-btn");
 
         function showSignupMessage(text, isError) {
-
             signupMessage.textContent = text;
             signupMessage.classList.remove("error", "success");
             signupMessage.classList.add(isError ? "error" : "success");
             signupMessage.style.display = "block";
-
         }
 
-
-        // REAL POCKETBASE SIGNUP
-
+        // REAL SUPABASE SIGNUP
         document.getElementById("signupForm").addEventListener("submit", async function(event) {
-
             event.preventDefault();
 
             // 1. Read the form fields
-
             const firstName = document.getElementById("firstName").value.trim();
             const lastName = document.getElementById("lastName").value.trim();
             const email = document.getElementById("email").value.trim();
             const password = document.getElementById("password").value;
             const confirmPassword = document.getElementById("confirmPassword").value;
             const location = document.getElementById("location").value.trim();
-            const category = document.getElementById("category").value;
+            const categoryValue = document.getElementById("category").value;
 
             // 2. Work out the selected role
-
             const isEventPlanner = eventRole.classList.contains("active");
             const role = isEventPlanner ? "event_planner" : "brand";
 
@@ -257,7 +238,6 @@
             const fullName = firstName + " " + lastName;
 
             // 3. Simple checks before sending anything
-
             if (password !== confirmPassword) {
                 showSignupMessage("Passwords do not match.", true);
                 return;
@@ -277,69 +257,49 @@
             submitButton.textContent = "Creating Account...";
             showSignupMessage("Creating your account...", false);
 
-            // Turn a PocketBase error into a readable message.
+            // 4. Create the user in Supabase Auth
+            const { data: authData, error: authError } = await window.supabaseClient.auth.signUp({
+                email: email,
+                password: password,
+            });
 
-            function getErrorMessage(err) {
-
-                const data = err &&
-                    err.response &&
-                    err.response.data;
-
-                if (data) {
-                    for (const field of Object.keys(data)) {
-                        const fieldError = data[field];
-                        if (fieldError && fieldError.message) {
-                            return fieldError.message;
-                        }
-                    }
-                }
-
-                return (err && err.message) || "Something went wrong. Please try again.";
-
-            }
-
-            // 4. Create the user + profile.
-            //    In PocketBase the profile fields live on the user record itself,
-            //    so one create call is all we need (no separate table).
-
-            try {
-
-                await window.pb
-                    .collection("users")
-                    .create({
-                        email: email,
-                        password: password,
-                        passwordConfirm: password,
-                        name: fullName,
-                        role: role,
-                        organization_name: organizationName,
-                        category: category,
-                        location: location
-                    });
-
-            } catch (err) {
-
-                showSignupMessage(getErrorMessage(err), true);
+            if (authError) {
+                showSignupMessage(authError.message, true);
                 submitButton.disabled = false;
                 submitButton.textContent = "Create Account →";
                 return;
-
             }
 
-            // 5. Move on to the login page.
-            //    PocketBase does not require email confirmation by default.
+            // 5. Create the public profile record in our `users` table
+            if (authData.user) {
+                const { error: profileError } = await window.supabaseClient
+                    .from('users')
+                    .insert([
+                        {
+                            id: authData.user.id,
+                            name: fullName,
+                            role: role,
+                            organization_name: organizationName,
+                            category: categoryValue,
+                            location: location
+                        }
+                    ]);
 
-            showSignupMessage(
-                "Account created! Sign in to continue.",
-                false
-            );
+                if (profileError) {
+                    showSignupMessage("Profile creation failed: " + profileError.message, true);
+                    submitButton.disabled = false;
+                    submitButton.textContent = "Create Account →";
+                    return;
+                }
+            }
+
+            // 6. Success - Move on to the login page.
+            showSignupMessage("Account created! Sign in to continue.", false);
 
             setTimeout(function() {
                 window.location.href = "login.html?created=1";
             }, 1200);
-
         });
-
     </script>
 
 </body>
