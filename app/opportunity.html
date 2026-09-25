@@ -116,8 +116,8 @@
 <script src="../js/script.js"></script>
 
 <!-- POCKETBASE SDK + SHARED CONFIG + AUTH GUARD (load in this order) -->
-<script src="https://cdn.jsdelivr.net/npm/pocketbase@0.28.1/dist/pocketbase.umd.js"></script>
-<script src="../js/pocketbase.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/supabase.js"></script>
 <script src="../js/auth-guard.js"></script>
 
 <!-- OPPORTUNITY LOGIC -->
@@ -148,17 +148,8 @@
         });
     }
 
-    // Turn a PocketBase error into a readable message (same pattern as profile.html).
+    // Supabase errors are already simple strings in `error.message`.
     function getErrorMessage(err) {
-        const data = err && err.response && err.response.data;
-        if (data) {
-            for (const field of Object.keys(data)) {
-                const fieldError = data[field];
-                if (fieldError && fieldError.message) {
-                    return fieldError.message;
-                }
-            }
-        }
         return (err && err.message) || "Something went wrong. Please try again.";
     }
 
@@ -213,12 +204,16 @@
                 interestBtn.textContent = "Sending…";
 
                 try {
-                    await window.pb.collection("connections").create({
-                        from_user: profile.id,
-                        to_user: organizerId,
-                        opportunity: opp.id,
-                        status: "pending"
-                    });
+                    const { error } = await window.supabaseClient
+                        .from("connections")
+                        .insert([{
+                            from_user: profile.id,
+                            to_user: organizerId,
+                            opportunity_id: opp.id,
+                            status: "pending"
+                        }]);
+
+                    if (error) throw error;
                 } catch (err) {
                     showOppMessage("Could not send interest: " + getErrorMessage(err), true);
                     interestBtn.disabled = false;
@@ -226,7 +221,7 @@
                     return;
                 }
 
-                showOppMessage("Interest sent to " + organizerLabel + "! They'll review it on their connections page. The Connections page ships in the next phase.", false);
+                showOppMessage("Interest sent to " + organizerLabel + "! They'll review it on their connections page.", false);
                 interestActions.style.display = "none";
             };
         } else {
@@ -270,9 +265,20 @@
 
         let opp;
         try {
-            opp = await window.pb.collection("opportunities").getOne(oppId, {
-                expand: "event_id,organizer_id"
-            });
+            const { data, error } = await window.supabaseClient
+                .from("opportunities")
+                .select("*, event_id(*), organizer_id(*)")
+                .eq("id", oppId)
+                .single();
+
+            if (error) throw error;
+
+            // Map objects for compatibility
+            opp = {
+                ...data,
+                event_id: data.event_id,
+                organizer_id: data.organizer_id
+            };
         } catch (err) {
             document.getElementById("oppTitle").textContent = "Opportunity not found";
             document.getElementById("oppStatus").textContent = "";

@@ -135,47 +135,26 @@
 
 <script src="../js/script.js"></script>
 
-<!-- POCKETBASE SDK + SHARED CONFIG + AUTH GUARD (load in this order) -->
-<script src="https://cdn.jsdelivr.net/npm/pocketbase@0.28.1/dist/pocketbase.umd.js"></script>
-<script src="../js/pocketbase.js"></script>
+<!-- SUPABASE SDK + SHARED CONFIG + AUTH GUARD (load in this order) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/supabase.js"></script>
 <script src="../js/auth-guard.js"></script>
 
 <!-- PROFILE LOGIC -->
-
 <script>
-
     let currentUser = null;
 
     function showProfileMessage(text, isError) {
-
         const message = document.getElementById("profileMessage");
-
         message.textContent = text;
         message.classList.remove("error", "success");
         message.classList.add(isError ? "error" : "success");
         message.style.display = "block";
-
     }
 
-    // Turn a PocketBase error into a readable message.
-
+    // Supabase errors are already simple strings in `error.message`.
     function getErrorMessage(err) {
-
-        const data = err &&
-            err.response &&
-            err.response.data;
-
-        if (data) {
-            for (const field of Object.keys(data)) {
-                const fieldError = data[field];
-                if (fieldError && fieldError.message) {
-                    return fieldError.message;
-                }
-            }
-        }
-
         return (err && err.message) || "Something went wrong. Please try again.";
-
     }
 
     function getRoleLabel(role) {
@@ -305,31 +284,36 @@
             saveButton.textContent = "Saving...";
 
             try {
-
-                await window.pb
-                    .collection("users")
-                    .update(currentUser.id, {
+                const { error: updateError } = await window.supabaseClient
+                    .from("users")
+                    .update({
                         name: fullName,
                         organization_name: document.getElementById("editOrg").value.trim(),
                         location: document.getElementById("editLocation").value.trim(),
                         category: document.getElementById("editCategory").value.trim(),
                         description: document.getElementById("editDescription").value.trim()
-                    });
+                    })
+                    .eq("id", currentUser.id);
 
+                if (updateError) throw updateError;
             } catch (err) {
-
                 showProfileMessage("Could not save: " + getErrorMessage(err), true);
                 saveButton.disabled = false;
                 saveButton.textContent = "Save Changes";
                 return;
-
             }
 
             // Reload the profile so the display shows fresh data
-
             let updated = null;
             try {
-                updated = await window.pb.collection("users").getOne(currentUser.id);
+                const { data, error } = await window.supabaseClient
+                    .from("users")
+                    .select("*")
+                    .eq("id", currentUser.id)
+                    .single();
+
+                if (error) throw error;
+                updated = data;
             } catch (err) {
                 console.error("Could not reload profile:", err);
             }

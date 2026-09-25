@@ -102,8 +102,8 @@
 <script src="../js/script.js"></script>
 
 <!-- POCKETBASE SDK + SHARED CONFIG + AUTH GUARD -->
-<script src="https://cdn.jsdelivr.net/npm/pocketbase@0.28.1/dist/pocketbase.umd.js"></script>
-<script src="../js/pocketbase.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/supabase.js"></script>
 <script src="../js/auth-guard.js"></script>
 
 <!-- CONNECTIONS LOGIC -->
@@ -274,7 +274,12 @@
     async function updateStatus(id, status) {
         hideMessage();
         try {
-            await window.pb.collection("connections").update(id, { status: status });
+            const { error } = await window.supabaseClient
+                .from("connections")
+                .update({ status: status })
+                .eq("id", id);
+
+            if (error) throw error;
             showMessage(status === "accepted" ? "Connection accepted." : "Connection declined.", false);
             await renderView();
         } catch (err) {
@@ -300,23 +305,38 @@
         document.getElementById("brandView").style.display = isPlanner ? "none" : "";
 
         try {
-            const rows = await window.pb.collection("connections").getFullList({
-                sort: "-created",
-                expand: "from_user,to_user,opportunity"
-            });
+            const { data: mine, error } = await window.supabaseClient
+                .from("connections")
+                .select("*, from_user(*), to_user(*), opportunity_id(*)")
+                .or(`from_user.eq.${profile.id},to_user.eq.${profile.id}`)
+                .order("created_at", { ascending: false });
 
-            const mine = rows.filter(function (conn) {
-                const fromId = conn.from_user && conn.from_user.id ? conn.from_user.id : conn.from_user;
-                const toId = conn.to_user && conn.to_user.id ? conn.to_user.id : conn.to_user;
-                return isPlanner
-                    ? (String(toId) === String(profile.id))
-                    : (String(fromId) === String(profile.id));
-            });
+            if (error) throw error;
 
             if (isPlanner) {
-                renderPlannerView(mine);
+                // In Supabase we already joined the related rows as objects
+                // However, to keep compatibility with render logic, map them into an 'expand' object
+                const mappedRows = (mine || []).map(r => ({
+                    ...r,
+                    expand: {
+                        from_user: r.from_user,
+                        to_user: r.to_user,
+                        opportunity: r.opportunity_id
+                    },
+                    opportunity: r.opportunity_id
+                }));
+                renderPlannerView(mappedRows);
             } else {
-                renderBrandView(mine);
+                const mappedRows = (mine || []).map(r => ({
+                    ...r,
+                    expand: {
+                        from_user: r.from_user,
+                        to_user: r.to_user,
+                        opportunity: r.opportunity_id
+                    },
+                    opportunity: r.opportunity_id
+                }));
+                renderBrandView(mappedRows);
             }
         } catch (err) {
             const target = isPlanner ? "connectionCount" : "brandRequestCount";

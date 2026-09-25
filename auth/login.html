@@ -77,119 +77,59 @@
 
 <script src="../js/script.js"></script>
 
-    <!-- POCKETBASE SDK (must load before the shared config) -->
-    <script src="https://cdn.jsdelivr.net/npm/pocketbase@0.28.1/dist/pocketbase.umd.js"></script>
+    <!-- SUPABASE SDK (must load before the shared config) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <!-- SHARED POCKETBASE CONFIG -->
-    <script src="../js/pocketbase.js"></script>
-
+    <!-- SHARED SUPABASE CONFIG -->
+    <script src="../js/supabase.js"></script>
 
     <!-- REAL LOGIN LOGIC -->
-
     <script>
-
-        const loginMessage =
-            document.getElementById("loginMessage");
-
-        const loginButton =
-            document.querySelector(".login-submit");
-
+        const loginMessage = document.getElementById("loginMessage");
+        const loginButton = document.querySelector(".login-submit");
 
         function showLoginMessage(text, isError) {
-
             loginMessage.textContent = text;
             loginMessage.classList.remove("error", "success");
             loginMessage.classList.add(isError ? "error" : "success");
             loginMessage.style.display = "block";
-
         }
-
-
-        // Turn a PocketBase error into a readable message.
-
-        function getErrorMessage(err) {
-
-            const data = err &&
-                err.response &&
-                err.response.data;
-
-            if (data) {
-                for (const field of Object.keys(data)) {
-                    const fieldError = data[field];
-                    if (fieldError && fieldError.message) {
-                        return fieldError.message;
-                    }
-                }
-            }
-
-            return (err && err.message) || "Something went wrong. Please try again.";
-
-        }
-
 
         // If the user just created an account, show a friendly note.
-
-        const urlParams =
-            new URLSearchParams(window.location.search);
-
+        const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get("created")) {
-            showLoginMessage(
-                "Account created — welcome! Sign in to continue.",
-                false
-            );
+            showLoginMessage("Account created — welcome! Sign in to continue.", false);
         }
 
+        // REAL SUPABASE LOGIN
+        document.getElementById("loginForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+            const email = document.getElementById("loginEmail").value.trim();
+            const password = document.getElementById("loginPassword").value;
 
-        // REAL POCKETBASE LOGIN
+            loginButton.disabled = true;
+            loginButton.textContent = "Signing in...";
 
-        document
-            .getElementById("loginForm")
-            .addEventListener("submit", async function(event) {
-
-                event.preventDefault();
-
-                const email =
-                    document.getElementById("loginEmail").value.trim();
-
-                const password =
-                    document.getElementById("loginPassword").value;
-
-                loginButton.disabled = true;
-                loginButton.textContent = "Signing in...";
-
-                // 1. Authenticate with PocketBase
-
-                try {
-
-                    await window.pb
-                        .collection("users")
-                        .authWithPassword(email, password);
-
-                } catch (err) {
-
-                    showLoginMessage(getErrorMessage(err), true);
-
-                    loginButton.disabled = false;
-                    loginButton.textContent = "Sign In →";
-
-                    return;
-
-                }
-
-                // 2. Success — go to the dashboard.
-                //    The dashboard checks the session itself.
-
-                showLoginMessage(
-                    "Success! Taking you to your dashboard...",
-                    false
-                );
-
-                setTimeout(function() {
-                    window.location.href = "../app/dashboard.html";
-                }, 800);
-
+            // 1. Authenticate with Supabase
+            const { data, error } = await window.supabaseClient.auth.signInWithPassword({
+                email: email,
+                password: password,
             });
 
+            if (error) {
+                showLoginMessage(error.message, true);
+                loginButton.disabled = false;
+                loginButton.textContent = "Sign In →";
+                return;
+            }
+
+            // 2. Success — go to the dashboard.
+            showLoginMessage("Success! Taking you to your dashboard...", false);
+
+            setTimeout(function() {
+                window.location.href = "../app/dashboard.html";
+            }, 800);
+        });
     </script>
 
 </body>

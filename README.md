@@ -38,7 +38,7 @@ Partnership
 ## Tech stack
 
 - **Frontend:** HTML, CSS, JavaScript (no frameworks)
-- **Auth + Database:** PocketBase (self-hosted, SQLite-backed, built-in admin UI)
+- **Auth + Database:** Supabase (PostgreSQL, fully serverless-compatible)
 - **Future possibility:** Python + Flask only if server-side logic is truly needed
 
 ## Project structure
@@ -61,9 +61,9 @@ LinkUp/
 │   └── style.css         Global styles (Butter + Ink design system)
 ├── js/
 │   ├── script.js         Shared UI motion (reveals, tilt, parallax)
-│   ├── pocketbase.js     Shared PocketBase client config
+│   ├── supabase.js       Shared Supabase client config
 │   └── auth-guard.js     Shared session guard (`requireSession()` / `getInitials()`)
-├── pocketbase-collections.json   Import file: events + opportunities collections
+├── supabase-schema.sql   SQL file to initialize the Supabase database
 └── ROADMAP.md            Full product + implementation roadmap
 ```
 
@@ -81,37 +81,26 @@ are driven by `script.js` (`data-reveal`, `data-tilt`, `data-parallax`).
 
 ## Current capabilities
 
-- ✅ Real PocketBase signup (creates a `users` record with role + profile fields)
-- ✅ Real PocketBase login (redirects to dashboard)
+- ✅ Real Supabase signup (creates an `auth.users` record and a public `users` profile)
+- ✅ Real Supabase login (redirects to dashboard)
 - ✅ Role selection stored as `brand` / `event_planner`
 - ✅ Dashboard + profile render the real logged-in user's data
 - ✅ Landing page CTAs navigate correctly (no dead links in header/hero/CTA/footer)
-- ✅ `users` collection extended with `role`, `organization_name`, `location`,
-  `category`, `description` (Admin UI)
-- ✅ Marketplace collections **imported and live** (`events` + `opportunities`)
-- 🚧 Discover page + real marketplace data next (Phase 5)
+- ✅ Row Level Security applied to all database tables
+- ✅ Marketplace tables created and live (`events`, `opportunities`, `connections`)
 
-## How to run
+## How to run (Local Development) & Deploy (24/7 Hosting for Vercel)
 
-1. Download PocketBase for Windows from <https://pocketbase.io/docs/> and extract
-   `pocketbase.exe`.
-2. Run `pocketbase.exe` (a terminal/server starts on `http://127.0.0.1:8090`).
-3. Open `http://127.0.0.1:8090/_/` and create the admin account.
-4. In **Collections → users** add these profile fields (`name` already exists):
-   `role` (select: `brand`, `event_planner`), `organization_name`,
-   `location`, `category`, `description`.
-5. In **Settings → Import collections**, paste the contents of
-   `pocketbase-collections.json`. This creates the marketplace collections
-   `events` and `opportunities` with their access rules.
-6. Serve the project with any static server (e.g. VS Code Live Server) and open
-   `index.html`.
+Because this app uses a static frontend, it is extremely easy to host on platforms like Vercel. However, since Vercel is serverless, we use **Supabase** for our database because it integrates perfectly, is available 24/7, and has a great free tier.
+
+**Please see [`SUPABASE_SETUP_GUIDE.md`](./SUPABASE_SETUP_GUIDE.md) for a step-by-step guide on how to easily set up your free Supabase database (no credit card required), initialize the tables, and connect it to your app.**
+
+Once your `js/supabase.js` file is configured with your Supabase URL and Key, you can run the app locally using any static server (e.g., VS Code Live Server) and open `index.html`.
+The exact same setup works instantly in production on Vercel!
 
 The dashboard / profile areas require a logged-in session (sign up first).
 
 ## Security rules (always)
 
-- The frontend only talks to PocketBase over its public REST API — never use
-  superuser/admin credentials in frontend code.
-- Keep the default `users` collection rules (anyone can sign up; a user can only
-  update their own record).
-- Never disable collection rules or expose the admin URL/credentials.
+- The frontend only talks to Supabase using the `anon` public API key — **never** use your `service_role` key in frontend code.
+- Data privacy is enforced securely on the database level via PostgreSQL Row Level Security (RLS) policies.

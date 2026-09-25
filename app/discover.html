@@ -199,8 +199,8 @@
 <script src="../js/script.js"></script>
 
 <!-- POCKETBASE SDK + SHARED CONFIG + AUTH GUARD (load in this order) -->
-<script src="https://cdn.jsdelivr.net/npm/pocketbase@0.28.1/dist/pocketbase.umd.js"></script>
-<script src="../js/pocketbase.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/supabase.js"></script>
 <script src="../js/auth-guard.js"></script>
 
 <!-- DISCOVER LOGIC -->
@@ -458,10 +458,12 @@
         }
 
         try {
-            allEvents = await window.pb.collection("events").getFullList({
-                sort: "event_date",
-                expand: "organizer_id"
-            });
+            const { data, error } = await window.supabaseClient
+                .from("events")
+                .select("*, organizer_id(*)")
+                .order("event_date", { ascending: true });
+            if (error) throw error;
+            allEvents = data;
         } catch (err) {
             console.error("Could not load events:", err);
             document.getElementById("eventCount").textContent = "Could not load events";
@@ -469,17 +471,38 @@
         }
 
         try {
-            allOpportunities = await window.pb.collection("opportunities").getFullList({
-                sort: "-created",
-                expand: "event_id,organizer_id"
-            });
+            const { data, error } = await window.supabaseClient
+                .from("opportunities")
+                .select("*, event_id(*), organizer_id(*)")
+                .order("created_at", { ascending: false });
+            if (error) throw error;
+            allOpportunities = data;
         } catch (err) {
             console.error("Could not load opportunities:", err);
             document.getElementById("opportunityCount").textContent = "Could not load opportunities";
         }
 
-        renderEvents(allEvents);
-        renderOpportunities(allOpportunities);
+        // Keep compatibility with PocketBase expand format used by render logic
+        const mappedEvents = allEvents.map(e => ({
+            ...e,
+            expand: {
+                organizer_id: e.organizer_id
+            },
+            organizer_id: e.organizer_id
+        }));
+
+        const mappedOpportunities = allOpportunities.map(o => ({
+            ...o,
+            expand: {
+                event_id: o.event_id,
+                organizer_id: o.organizer_id
+            },
+            event_id: o.event_id,
+            organizer_id: o.organizer_id
+        }));
+
+        renderEvents(mappedEvents);
+        renderOpportunities(mappedOpportunities);
     }
 
     document.getElementById("searchInput")

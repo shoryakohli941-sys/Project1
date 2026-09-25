@@ -131,21 +131,16 @@
 
 <script src="../js/script.js"></script>
 
-<!-- POCKETBASE SDK + SHARED CONFIG + AUTH GUARD (load in this order) -->
-<script src="https://cdn.jsdelivr.net/npm/pocketbase@0.28.1/dist/pocketbase.umd.js"></script>
-<script src="../js/pocketbase.js"></script>
+<!-- SUPABASE SDK + SHARED CONFIG + AUTH GUARD (load in this order) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/supabase.js"></script>
 <script src="../js/auth-guard.js"></script>
 
-
 <!-- DASHBOARD LOGIC -->
-
 <script>
-
     async function renderDashboard() {
-
         // 1. Make sure a user is logged in.
         //    requireSession() redirects to login.html when there is no session.
-
         const auth = await requireSession();
 
         if (auth === null) return; // not logged in
@@ -230,25 +225,36 @@
         var stamp = document.getElementById("recommendedStamp");
 
         try {
-            var rows = await window.pb.collection("opportunities").getFullList({
-                sort: "-created",
-                limit: 3,
-                expand: "event_id,organizer_id"
-            });
+            const { data: rows, error } = await window.supabaseClient
+                .from("opportunities")
+                .select("*, event_id(*), organizer_id(*)")
+                .order("created_at", { ascending: false })
+                .limit(3);
+
+            if (error) throw error;
 
             if (stamp) {
                 stamp.textContent = "Live";
                 stamp.className = "stamp stamp--live";
             }
 
-            if (!rows.length) {
+            if (!rows || !rows.length) {
                 grid.style.display = "none";
                 empty.style.display = "";
                 return;
             }
 
+            // Map expand objects for compatibility with render logic
+            const mappedRows = rows.map(r => ({
+                ...r,
+                expand: {
+                    event_id: r.event_id,
+                    organizer_id: r.organizer_id
+                }
+            }));
+
             grid.innerHTML = "";
-            rows.forEach(function (item) {
+            mappedRows.forEach(function (item) {
                 var eventName =
                     item.event_id && item.event_id.name
                         ? item.event_id.name
