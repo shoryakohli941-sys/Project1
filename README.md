@@ -91,7 +91,7 @@ are driven by `script.js` (`data-reveal`, `data-tilt`, `data-parallax`).
 - ✅ Marketplace collections **imported and live** (`events` + `opportunities`)
 - 🚧 Discover page + real marketplace data next (Phase 5)
 
-## How to run
+## How to run (Local Development)
 
 1. Download PocketBase for Windows from <https://pocketbase.io/docs/> and extract
    `pocketbase.exe`.
@@ -107,6 +107,14 @@ are driven by `script.js` (`data-reveal`, `data-tilt`, `data-parallax`).
    `index.html`.
 
 The dashboard / profile areas require a logged-in session (sign up first).
+
+## How to deploy (24/7 Hosting for Vercel)
+
+If you deploy this site to Vercel (or any other platform), the local database (`127.0.0.1:8090`) will not be accessible to users on the internet.
+
+To solve this, you need to host PocketBase on a 24/7 server.
+
+**Please see [`POCKETBASE_HOSTING_GUIDE.md`](./POCKETBASE_HOSTING_GUIDE.md) for a step-by-step guide on how to easily set up a free 24/7 PocketBase database using PocketHost.io and connect it to your app.**
 
 ## Security rules (always)
 
